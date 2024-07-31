@@ -5,7 +5,7 @@
 SIM ?= icarus
 TOPLEVEL_LANG ?= verilog
 SRC_DIR = $(PWD)/../src
-PROJECT_SOURCES = project.v
+PROJECT_SOURCES = tt_um_jmack2201.v vga_pwm_wrapper.v audio_source.v control.v pwm.v vga.v
 
 ifneq ($(GATES),yes)
 

@@ -5,7 +5,7 @@
 
 `default_nettype none
 
-module tt_um_example (
+module tt_um_jmack2201 (
     input  wire [7:0] ui_in,    // Dedicated inputs
     output wire [7:0] uo_out,   // Dedicated outputs
     input  wire [7:0] uio_in,   // IOs: Input path
@@ -25,3 +25,36 @@ module tt_um_example (
   wire _unused = &{ena, clk, rst_n, 1'b0};
 
 endmodule
+
+/*
+IO assignments:
+input:
+0 vga_state 0
+1 vga_state 1
+2
+3 audio_select 0
+4 audio_select 1
+5
+6
+7
+
+output: for VGA
+0 R0
+1 R1
+2 G0
+3 G1
+4 B0
+5 B1
+6 HSYNC
+7 VSYNC
+
+IO:
+0 
+1 
+2 
+3
+4
+5
+6
+7 PWM out
+*/
