@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2024 Your Name
+ * Copyright (c) 2024 Jacob Mack
  * SPDX-License-Identifier: Apache-2.0
  */
 
@@ -17,12 +17,24 @@ module tt_um_jmack2201 (
 );
 
   // All output pins must be assigned. If not used, assign to 0.
-  assign uo_out  = ui_in + uio_in;  // Example: ou_out is the sum of ui_in and uio_in
   assign uio_out = 0;
-  assign uio_oe  = 0;
+  assign uio_oe = 1;
+
+  vga_pwm_wrapper wrapper(
+    .clk(clk),
+    .rst_n(rst_n),
+    .vga_state(ui_in[1:0]),
+    .audio_select(ui_in[4:3]),
+    .vga_r({uo_out[0],uo_out[4]}),
+    .vga_g({uo_out[1],uo_out[5]}),
+    .vga_b({uo_out[2],uo_out[6]}),
+    .hsync(uo_out[7]),
+    .vsync(uo_out[3]),
+    .pwm_out(uio_out[7])
+  );
 
   // List all unused inputs to prevent warnings
-  wire _unused = &{ena, clk, rst_n, 1'b0};
+  // wire _unused = &{ena, , 1'b0};
 
 endmodule
 
@@ -39,14 +51,14 @@ input:
 7
 
 output: for VGA
-0 R0
-1 R1
-2 G0
-3 G1
-4 B0
-5 B1
-6 HSYNC
-7 VSYNC
+0 R1
+1 G1
+2 B1
+3 VSYNC
+4 R0
+5 B0
+6 G0
+7 HSYNC
 
 IO:
 0 
