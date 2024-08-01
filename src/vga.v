@@ -158,4 +158,13 @@ module vga (
         end
     end
 
+    always @(*) begin
+        case (vga_state)
+            0 : {vga_r,vga_g,vga_b} = (v_state == V_VISIBLE_S && h_state == H_VISIBLE_S) ? 6'b110000 : 0;
+            1 : {vga_r,vga_g,vga_b} = (v_state == V_VISIBLE_S && h_state == H_VISIBLE_S) ? 6'b001100 : 0;
+            2 : {vga_r,vga_g,vga_b} = (v_state == V_VISIBLE_S && h_state == H_VISIBLE_S) ? 6'b000011 : 0;
+            3 : {vga_r,vga_g,vga_b} = (v_state == V_VISIBLE_S && h_state == H_VISIBLE_S) ? 6'b111111 : 0;
+            default: {vga_r,vga_g,vga_b} = (v_state == V_VISIBLE_S && h_state == H_VISIBLE_S) ? 6'b000000 : 0;
+        endcase
+    end
 endmodule
