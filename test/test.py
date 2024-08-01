@@ -7,101 +7,29 @@ from cocotb.triggers import ClockCycles
 from cocotb.triggers import Timer
 
 
-# @cocotb.test()
-# async def test_project(dut):
-#     dut._log.info("Start")
-
-#     # Set the clock period to 10 us (100 KHz)
-#     clock = Clock(dut.clk, 39.7219464, units="ns")
-#     cocotb.start_soon(clock.start())
-
-#     # Reset
-#     dut._log.info("Reset")
-#     dut.ena.value = 1
-#     dut.ui_in.value = 0
-#     dut.uio_in.value = 0
-#     dut.rst_n.value = 0
-#     await ClockCycles(dut.clk, 10)
-#     dut.rst_n.value = 1
-
-#     dut._log.info("Test project behavior test")
-
-#     # Set the input values you want to test
-#     dut.ui_in.value = 20
-#     dut.uio_in.value = 30
-
-#     # Wait for one clock cycle to see the output values
-#     await ClockCycles(dut.clk, 1)
-
-#     # The following assersion is just an example of how to check the output values.
-#     # Change it to match the actual expected output of your module:
-#     assert dut.uo_out.value == 50
-
-#     # Keep testing the module by changing the input values, waiting for
-#     # one or more clock cycles, and asserting the expected output values.
-# @cocotb.test()
-# async def test_project_1(dut):
-#     dut._log.info("Start")
-
-#     # Set the clock period to 10 us (100 KHz)
-#     clock = Clock(dut.clk, 39.7219464, units="ns")
-#     cocotb.start_soon(clock.start())
-
-#     # Reset
-#     dut._log.info("Reset")
-#     dut.ena.value = 1
-#     dut.ui_in.value = 0
-#     dut.uio_in.value = 0
-#     dut.rst_n.value = 0
-#     await ClockCycles(dut.clk, 10)
-#     dut.rst_n.value = 1
-
-#     dut._log.info("Test project behavior test")
-
-#     # Set the input values you want to test
-#     dut.ui_in.value = 30
-#     dut.uio_in.value = 30
-
-#     # Wait for one clock cycle to see the output values
-#     await ClockCycles(dut.clk, 1)
-
-#     # The following assersion is just an example of how to check the output values.
-#     # Change it to match the actual expected output of your module:
-#     assert dut.uo_out.value == 60
-
-#     # Keep testing the module by changing the input values, waiting for
-#     # one or more clock cycles, and asserting the expected output values.
-
-@cocotb.test()
-async def run_VGA(dut):
-    dut._log.info("Start")
-
-    # Set the clock period to 10 us (100 KHz)
-    clock = Clock(dut.clk, 39.7219464, units="ns")
-    cocotb.start_soon(clock.start())
-
+async def reset(dut):
     # Reset
-    dut._log.info("Reset")
     dut.ena.value = 1
     dut.ui_in.value = 0
     dut.uio_in.value = 0
     dut.rst_n.value = 0
-    await ClockCycles(dut.clk, 10)
+    await Timer(10, "ns")
     dut.rst_n.value = 1
 
-    dut._log.info("Testing H and V sync generation")
+async def start_clock(dut):
+    c = Clock(dut.clk, 39.8, units="ns")
+    await c.start()
 
-    # Set the input values you want to test
-    # dut.ui_in.value = 30
-    # dut.uio_in.value = 30
+@cocotb.test()
+async def run_VGA(dut):
+    dut._log.info("Starting test...")
+    
+    dut._log.info("Starting clock...")
+    await cocotb.start(start_clock(dut))
 
-    # Wait for one clock cycle to see the output values
-    # await ClockCycles(dut.clk, 1)
-    await Timer(10, units="us")
+    dut._log.info("Reseting design...")
+    await reset(dut)
 
-    # The following assersion is just an example of how to check the output values.
-    # Change it to match the actual expected output of your module:
-    # assert dut.uo_out.value == 60
+    dut._log.info("Testing H and V sync generation...")
 
-    # Keep testing the module by changing the input values, waiting for
-    # one or more clock cycles, and asserting the expected output values.
+    await Timer(1000, units="us")
