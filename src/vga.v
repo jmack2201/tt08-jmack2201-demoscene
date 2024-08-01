@@ -6,27 +6,7 @@ module vga (
 );
     reg [1:0] h_state, h_state_n, v_state, v_state_n;
     reg [10:0] h_count, v_count;
-    reg row_done;
-
-    parameter [1:0] H_VISIBLE_S = 0;
-    parameter [1:0] H_FRONT_S = 1;
-    parameter [1:0] H_PULSE_S = 2;
-    parameter [1:0] H_BACK_S = 3;
-
-    parameter [1:0] V_VISIBLE_S = 0;
-    parameter [1:0] V_FRONT_S = 1;
-    parameter [1:0] V_PULSE_S = 2;
-    parameter [1:0] V_BACK_S = 3;
-
-    parameter [10:0] H_VISIBLE_C = 640;
-    parameter [10:0] H_FRONT_C = 16;
-    parameter [10:0] H_PULSE_C = 96;
-    parameter [10:0] H_BACK_C = 48;
-
-    parameter [10:0] V_VISIBLE_C = 400;
-    parameter [10:0] V_FRONT_C = 12;
-    parameter [10:0] V_PULSE_C = 2;
-    parameter [10:0] V_BACK_C = 36;
+    reg row_done, frame_done;
 
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
@@ -37,6 +17,7 @@ module vga (
             hsync <= 1;
             vsync <= 1;
             row_done <= 0;
+            frame_done <=0;
         end else begin
 
             case (h_state)
@@ -97,6 +78,7 @@ module vga (
             case (v_state)
                 V_VISIBLE_S : begin
                     vsync <=1;
+                    frame_done <=0;
                     if (v_count == V_VISIBLE_C-1 && row_done) begin
                         v_state <= V_FRONT_S;
                         v_count <= 0;
@@ -109,6 +91,7 @@ module vga (
                     end
                 end
                 V_FRONT_S : begin
+                    frame_done <=0;
                     if (v_count == V_FRONT_C-1 && row_done) begin
                         v_state <= V_PULSE_S;
                         v_count <= 0;
@@ -125,6 +108,7 @@ module vga (
                 end
                 V_PULSE_S : begin
                     vsync <=0;
+                    frame_done <=0;
                     if (v_count == V_PULSE_C-1 && row_done) begin
                         v_state <= V_BACK_S;
                         v_count <= 0;
@@ -141,17 +125,21 @@ module vga (
                     if (v_count == V_BACK_C-1 && row_done) begin
                         v_state <= V_VISIBLE_S;
                         v_count <= 0;
+                        frame_done <=1;
                     end else if(row_done)begin
                         v_state <= V_BACK_S;
                         v_count <= v_count + 1;
+                        frame_done <=0;
                     end else begin
                         v_state <= v_state;
                         v_count <= v_count;
+                        frame_done <=0;
                     end
                 end
                 default: begin
                     v_count <= v_count;
                     vsync <= 1;
+                    frame_done <=0;
                     v_state <= V_VISIBLE_S;
                 end
             endcase

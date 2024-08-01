@@ -19,6 +19,7 @@ project:
   source_files:
     - "tt_um_jmack2201.v"
     - "vga_pwm_wrapper.v"
+    - "vga_cfg.v"
     - "control.v"
     - "pwm.v"
     - "vga.v"
