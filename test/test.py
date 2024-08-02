@@ -1,11 +1,11 @@
 # SPDX-FileCopyrightText: © 2024 Tiny Tapeout
 # SPDX-License-Identifier: Apache-2.0
 
-import PIL.Image
-import PIL.ImageChops
+import PIL
+from PIL import Image
+from PIL import ImageChops
 import cocotb
 import os
-import PIL
 import pprint as pp
 from cocotb.clock import Clock
 from cocotb.triggers import Timer, FallingEdge, RisingEdge
@@ -74,8 +74,6 @@ async def grab_frame(dut):
 
         if dut.user_project.wrapper.vga.row_done == 1:
             y += 1
-            print(dut.user_project.wrapper.vga.h_count.value.integer)
-            print(x)
             x = 0
         else:
             x += 1
