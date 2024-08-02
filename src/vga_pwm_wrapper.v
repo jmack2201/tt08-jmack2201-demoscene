@@ -15,7 +15,19 @@ module vga_pwm_wrapper (
         .vsync(vsync)
     );
 
-    pwm pwm ();
+    reg audio_source_out;
 
-    audio_source audio_source();
+    pwm pwm (
+        .clk(clk),
+        .rst_n(rst_n),
+        .audio_in(audio_source_out),
+        .pwm_out(pwm_out)
+    );
+
+    audio_source audio_source(
+        .clk(clk),
+        .rst_n(rst_n),
+        .audio_select(audio_select),
+        .audio_out(audio_source_out)
+    );
 endmodule
