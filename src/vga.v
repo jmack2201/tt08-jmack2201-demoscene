@@ -59,8 +59,12 @@ module vga (
                     hsync <=1;
                     if (h_count == H_BACK_C-1) begin
                         h_state <= H_VISIBLE_S;
-                        row_done <= 1;
+                        row_done <= 0;
                         h_count <= 0;
+                    end else if (h_count == H_BACK_C-2) begin
+                        h_state <= H_BACK_S;
+                        row_done <= 1;
+                        h_count <= h_count + 1;
                     end else begin
                         h_state <= H_BACK_S;
                         row_done <= 0;

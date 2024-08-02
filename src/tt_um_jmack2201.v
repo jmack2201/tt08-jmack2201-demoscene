@@ -17,7 +17,7 @@ module tt_um_jmack2201 (
 );
 
   // All output pins must be assigned. If not used, assign to 0.
-  assign uio_out = 0;
+  assign uio_out[6:0] = 0;
   assign uio_oe = 1;
 
   vga_pwm_wrapper wrapper(
@@ -37,36 +37,3 @@ module tt_um_jmack2201 (
   // wire _unused = &{ena, , 1'b0};
 
 endmodule
-
-/*
-IO assignments:
-input:
-0 vga_state 0
-1 vga_state 1
-2
-3 audio_select 0
-4 audio_select 1
-5
-6
-7
-
-output: for VGA
-0 R1
-1 G1
-2 B1
-3 VSYNC
-4 R0
-5 B0
-6 G0
-7 HSYNC
-
-IO:
-0 
-1 
-2 
-3
-4
-5
-6
-7 PWM out
-*/
