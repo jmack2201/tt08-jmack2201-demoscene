@@ -13,7 +13,7 @@ parameter [10:0] H_FRONT_C = 16;
 parameter [10:0] H_PULSE_C = 96;
 parameter [10:0] H_BACK_C = 48;
 
-parameter [10:0] V_VISIBLE_C = 400;
-parameter [10:0] V_FRONT_C = 12;
+parameter [10:0] V_VISIBLE_C = 480;
+parameter [10:0] V_FRONT_C = 10;
 parameter [10:0] V_PULSE_C = 2;
-parameter [10:0] V_BACK_C = 36;
+parameter [10:0] V_BACK_C = 33;
