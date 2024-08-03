@@ -8,7 +8,7 @@ import cocotb
 import os
 import pprint as pp
 from cocotb.clock import Clock
-from cocotb.triggers import Timer, FallingEdge, RisingEdge
+from cocotb.triggers import Timer, FallingEdge, RisingEdge, ClockCycles
 
 pprint = pp.PrettyPrinter()
 
@@ -46,7 +46,8 @@ async def reset(dut):
     dut.ui_in.value = 0
     dut.uio_in.value = 0
     dut.rst_n.value = 0
-    await Timer(100, "ns")
+    await ClockCycles(dut.clk, 10)
+    await FallingEdge(dut.clk)
     dut.rst_n.value = 1
 
 
@@ -72,7 +73,7 @@ async def grab_frame(dut):
         if x >= 0 and x < H_VISIBLE and y >= 0 and y < V_VISIBLE:
             pixel_array[x,y] = (r,g,b)
 
-        if dut.user_project.wrapper.vga.row_done == 1:
+        if dut.user_project.wrapper.vga.row_done.value == 1:
             y += 1
             x = 0
         else:
@@ -81,12 +82,20 @@ async def grab_frame(dut):
         if dut.user_project.wrapper.vga.v_state.value.integer == 1:
             return gen_image
         
-def golden_frame():
+def golden_frame(vga_control):
     image = PIL.Image.new("RGB",(H_VISIBLE,V_VISIBLE))
     pixels = image.load()
+    if vga_control == 0:
+        pixel = (255,0,0)
+    elif vga_control == 1:
+        pixel = (0,255,0)
+    elif vga_control == 2:
+        pixel = (0,0,255)
+    elif vga_control == 3:
+        pixel = (255,255,255)
     for y in range(V_VISIBLE):
         for x in range(H_VISIBLE):
-            pixels[x,y] = (0,0,255)
+            pixels[x,y] = pixel
     return image
 
 async def start_clock(dut):
@@ -94,14 +103,74 @@ async def start_clock(dut):
     await c.start()
 
 @cocotb.test()
-async def run_VGA_single_frame(dut):
+async def run_VGA_single_red_frame(dut):
     await start_test(dut)
 
+    # await FallingEdge(dut.clk)
+    vga_control = 0
+    dut.user_project.ui_in.value = vga_control
+
+    end_frame = await cocotb.start(grab_frame(dut))
+    frame = await end_frame.join()
+    # frame.save("test.png")
+    golden_image = golden_frame(vga_control)
+    # golden_image.save("golden.png")
+    await FallingEdge(dut.user_project.wrapper.vga.frame_done)
+
+    image_difference = PIL.ImageChops.difference(frame, golden_image)
+
+    assert(not image_difference.getbbox())
+
+@cocotb.test()
+async def run_VGA_single_green_frame(dut):
+    await start_test(dut)
+
+    # await FallingEdge(dut.clk)
+    vga_control = 1
+    dut.user_project.ui_in.value = vga_control
+
+    end_frame = await cocotb.start(grab_frame(dut))
+    frame = await end_frame.join()
+    # frame.save("test.png")
+    golden_image = golden_frame(vga_control)
+    # golden_image.save("golden.png")
+    await FallingEdge(dut.user_project.wrapper.vga.frame_done)
+
+    image_difference = PIL.ImageChops.difference(frame, golden_image)
+
+    assert(not image_difference.getbbox())
+
+@cocotb.test()
+async def run_VGA_single_blue_frame(dut):
+    await start_test(dut)
+
+    # await FallingEdge(dut.clk)
+    vga_control = 2
+    dut.user_project.ui_in.value = vga_control
+
+    end_frame = await cocotb.start(grab_frame(dut))
+    frame = await end_frame.join()
+    # frame.save("test.png")
+    golden_image = golden_frame(vga_control)
+    # golden_image.save("golden.png")
+    await FallingEdge(dut.user_project.wrapper.vga.frame_done)
+
+    image_difference = PIL.ImageChops.difference(frame, golden_image)
+
+    assert(not image_difference.getbbox())
+
+@cocotb.test()
+async def run_VGA_single_white_frame(dut):
+    await start_test(dut)
+
+    # await FallingEdge(dut.clk)
+    vga_control = 3
+    dut.user_project.ui_in.value = vga_control
 
     end_frame = await cocotb.start(grab_frame(dut))
     frame = await end_frame.join()
     frame.save("test.png")
-    golden_image = golden_frame()
+    golden_image = golden_frame(vga_control)
     golden_image.save("golden.png")
     await FallingEdge(dut.user_project.wrapper.vga.frame_done)
 
