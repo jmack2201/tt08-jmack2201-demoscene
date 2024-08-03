@@ -1,14 +1,14 @@
 module vga (
     input clk, rst_n,
     input [1:0] vga_state,
-    output wire [1:0] vga_r, vga_b, vga_g,
+    output reg [1:0] vga_r, vga_b, vga_g,
     output reg hsync, vsync
 );
     reg [1:0] h_state, h_state_n, v_state, v_state_n;
     reg [10:0] h_count, v_count;
     reg row_done, frame_done;
 
-    always @(posedge clk or negedge rst_n) begin
+    always @(posedge clk) begin
         if (!rst_n) begin
             h_state <= H_VISIBLE_S;
             v_state <= V_VISIBLE_S;
@@ -152,15 +152,14 @@ module vga (
         end
     end
 
-    // always @(*) begin
-    //     case (vga_state)
-    //         0 : {vga_r,vga_g,vga_b} = (v_state == V_VISIBLE_S && h_state == H_VISIBLE_S) ? 6'b110000 : 0;
-    //         1 : {vga_r,vga_g,vga_b} = (v_state == V_VISIBLE_S && h_state == H_VISIBLE_S) ? 6'b001100 : 0;
-    //         2 : {vga_r,vga_g,vga_b} = (v_state == V_VISIBLE_S && h_state == H_VISIBLE_S) ? 6'b000011 : 0;
-    //         3 : {vga_r,vga_g,vga_b} = (v_state == V_VISIBLE_S && h_state == H_VISIBLE_S) ? 6'b111111 : 0;
-    //         default: {vga_r,vga_g,vga_b} = (v_state == V_VISIBLE_S && h_state == H_VISIBLE_S) ? 6'b000000 : 0;
-    //     endcase
-    // end
+    always @(*) begin
+        case (vga_state)
+            0 : {vga_r,vga_g,vga_b} = (v_state == V_VISIBLE_S && h_state == H_VISIBLE_S) ? 6'b110000 : 0;
+            1 : {vga_r,vga_g,vga_b} = (v_state == V_VISIBLE_S && h_state == H_VISIBLE_S) ? 6'b001100 : 0;
+            2 : {vga_r,vga_g,vga_b} = (v_state == V_VISIBLE_S && h_state == H_VISIBLE_S) ? 6'b000011 : 0;
+            3 : {vga_r,vga_g,vga_b} = (v_state == V_VISIBLE_S && h_state == H_VISIBLE_S) ? 6'b111111 : 0;
+            default: {vga_r,vga_g,vga_b} = (v_state == V_VISIBLE_S && h_state == H_VISIBLE_S) ? 6'b000000 : 0;
+        endcase
+    end
 
-    assign {vga_r,vga_g,vga_b} = (v_state == V_VISIBLE_S && h_state == H_VISIBLE_S) ? 6'b000011 : 0;
 endmodule
