@@ -1,18 +1,27 @@
 module vga_pwm_wrapper (
-    input clk, rst_n,
+    input clk, rst_n, SCLK, SSEL, MOSI,
     output [1:0] vga_r, vga_b, vga_g,
-    output hsync, vsync, pwm_out
+    output hsync, vsync, pwm_out, MISO
 );
     reg [10:0] hcount, vcount;
     vga vga (
         .clk(clk),
         .rst_n(rst_n),
         .vga_state(vga_state),
+        .h_count(h_count),
+        .v_count(v_count),
         .vga_r(vga_r),
         .vga_g(vga_g),
         .vga_b(vga_b),
         .hsync(hsync),
         .vsync(vsync)
+    );
+
+    spi spi (
+        .SCLK(SCLK),
+        .SSEL(SSEL),
+        .MOSI(MOSI),
+        .MISO(MISO)
     );
 
     reg audio_source_out;

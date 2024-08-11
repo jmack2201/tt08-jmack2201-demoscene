@@ -18,7 +18,7 @@ module tt_um_jmack2201 (
 
   // All output pins must be assigned. If not used, assign to 0.
   assign uio_out[6:0] = 0;
-  assign uio_oe = 1;
+  assign uio_oe = 8'b10000000;
 
   vga_pwm_wrapper wrapper(
     .clk(clk),
@@ -26,8 +26,12 @@ module tt_um_jmack2201 (
     .vga_r({uo_out[0],uo_out[4]}),
     .vga_g({uo_out[1],uo_out[5]}),
     .vga_b({uo_out[2],uo_out[6]}),
-    .hsync(uo_out[7]),
     .vsync(uo_out[3]),
+    .hsync(uo_out[7]),
+    .SCLK(uio_out[0]),
+    .SSEL(uio_out[1]),
+    .MOSI(uio_out[2]),
+    .MISO(uio_out[3]),
     .pwm_out(uio_out[7])
   );
 

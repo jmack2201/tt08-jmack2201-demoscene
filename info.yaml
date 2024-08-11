@@ -23,6 +23,7 @@ project:
     - "pwm.v"
     - "vga.v"
     - "audio_source.v"
+    - "spi.v"
 
 # The pinout of your project. Leave unused pins blank. DO NOT delete or add any pins.
 pinout:
@@ -47,10 +48,10 @@ pinout:
   uo[7]: "HSYNC"
 
   # Bidirectional pins
-  uio[0]: ""
-  uio[1]: ""
-  uio[2]: ""
-  uio[3]: ""
+  uio[0]: "SCLK"
+  uio[1]: "SSEL"
+  uio[2]: "MOSI"
+  uio[3]: "MISO"
   uio[4]: ""
   uio[5]: ""
   uio[6]: ""
