@@ -1,9 +1,9 @@
 # Tiny Tapeout project information
 project:
-  title:        "Configurable Demoscene Project"      # Project title
+  title:        "Configurable Sprite Bouncer with SFX"      # Project title
   author:       "Jacob Mack"      # Your name
   discord:      "Silicon Psycho"      # Your discord username, for communication and automatically assigning you a Tapeout role (optional)
-  description:  "Configurable hardware to output images via VGA and audio through mono PWM"      # One line description of what your project does
+  description:  "Configurable hardware to output a moving, bouncing sprite with audio effects on collison with boundary"      # One line description of what your project does
   language:     "Verilog" # other examples include SystemVerilog, Amaranth, VHDL, etc
   clock_hz:      25175000      # Clock frequency in Hz (or 0 if not applicable)
 
@@ -20,7 +20,6 @@ project:
     - "tt_um_jmack2201.v"
     - "vga_pwm_wrapper.v"
     - "vga_cfg.v"
-    - "control.v"
     - "pwm.v"
     - "vga.v"
     - "audio_source.v"

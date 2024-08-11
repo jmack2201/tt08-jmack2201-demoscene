@@ -9,11 +9,11 @@ You can also include images in this folder and reference them in the markdown. E
 
 ## How it works
 
-configurable VGA and audio output based on input select signals
+Sprite ROM, background control registers, and audio ROM are configured using SPI
 
 ## How to test
 
-Use DIP switches to control what video and audio sources are desired
+Configure background, sprite image, and sfx on bounce using SPI
 
 ## External hardware
 
