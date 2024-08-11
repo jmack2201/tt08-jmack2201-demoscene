@@ -1,9 +1,9 @@
 module vga_pwm_wrapper (
     input clk, rst_n,
-    input [1:0] vga_state, audio_select,
     output [1:0] vga_r, vga_b, vga_g,
     output hsync, vsync, pwm_out
 );
+    reg [10:0] hcount, vcount;
     vga vga (
         .clk(clk),
         .rst_n(rst_n),

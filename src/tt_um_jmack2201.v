@@ -23,8 +23,6 @@ module tt_um_jmack2201 (
   vga_pwm_wrapper wrapper(
     .clk(clk),
     .rst_n(rst_n),
-    .vga_state(ui_in[1:0]),
-    .audio_select(ui_in[4:3]),
     .vga_r({uo_out[0],uo_out[4]}),
     .vga_g({uo_out[1],uo_out[5]}),
     .vga_b({uo_out[2],uo_out[6]}),
