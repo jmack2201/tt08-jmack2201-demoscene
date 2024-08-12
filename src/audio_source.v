@@ -3,7 +3,7 @@ module audio_source (
     output reg audio_out
 );
 
-    reg [27:0] tone_counter;
+    reg [30:0] tone_counter;
     always @(posedge clk ) begin
         if (!rst_n) begin
             tone_counter <= 0;
@@ -11,7 +11,10 @@ module audio_source (
             tone_counter <= tone_counter + 1;
         end
     end
-    wire [5:0] full_note = tone_counter[27:22]; //numerater
+
+    reg [7:0] full_note; //numerater
+
+    sfx_rom rom (.clk(clk), .addr(tone_counter[29:22]), .note_out(full_note));
 
     reg [3:0] remainder_3_2;
     reg [2:0] octave; //quotient
@@ -146,7 +149,7 @@ module audio_source (
         if (!rst_n) begin
             audio_out <= 0;
         end else begin
-            if (note_counter == 0 && octave_counter == 0) begin
+            if (note_counter == 0 && octave_counter == 0 && tone[30] == 0 && full_note != 0) begin
                 audio_out <= ~audio_out;
             end else begin
                 audio_out <= audio_out;
