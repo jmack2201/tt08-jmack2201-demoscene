@@ -149,7 +149,7 @@ module audio_source (
         if (!rst_n) begin
             audio_out <= 0;
         end else begin
-            if (note_counter == 0 && octave_counter == 0 && tone[30] == 0 && full_note != 0) begin
+            if (note_counter == 0 && octave_counter == 0 && tone_counter[30] == 0 && full_note != 0) begin
                 audio_out <= ~audio_out;
             end else begin
                 audio_out <= audio_out;
