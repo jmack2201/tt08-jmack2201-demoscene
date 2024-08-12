@@ -3,16 +3,17 @@ module vga_pwm_wrapper (
     output [1:0] vga_r, vga_b, vga_g,
     output hsync, vsync, pwm_out, MISO
 );
-    reg [10:0] hcount, vcount;
+    reg [10:0] h_count, v_count;
+    reg visible;
+
+    assign {vga_r,vga_g,vga_b} = h_count[5:0];
+
     vga vga (
         .clk(clk),
         .rst_n(rst_n),
-        .vga_state(vga_state),
         .h_count(h_count),
         .v_count(v_count),
-        .vga_r(vga_r),
-        .vga_g(vga_g),
-        .vga_b(vga_b),
+        .visible(visible),
         .hsync(hsync),
         .vsync(vsync)
     );
@@ -37,7 +38,6 @@ module vga_pwm_wrapper (
     audio_source audio_source(
         .clk(clk),
         .rst_n(rst_n),
-        .audio_select(audio_select),
         .audio_out(audio_source_out)
     );
 endmodule

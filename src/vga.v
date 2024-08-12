@@ -1,12 +1,11 @@
 module vga (
     input clk, rst_n,
-    output reg [1:0] vga_r, vga_b, vga_g,
     output reg [10:0] h_count, v_count,
     output wire visible,
     output reg hsync, vsync
 );
-    reg [1:0] h_state, h_state_n, v_state, v_state_n;
-    reg [10:0] h_count, v_count;
+    reg [1:0] h_state, v_state;
+    reg row_done, frame_done;
 
     assign visible = (h_state == H_VISIBLE_S && v_state == V_VISIBLE_S) ? 1'b1 : 1'b0 ;
 
