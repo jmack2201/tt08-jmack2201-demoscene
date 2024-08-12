@@ -24,6 +24,9 @@ project:
     - "vga.v"
     - "audio_source.v"
     - "spi.v"
+    - "pixel_color.v"
+    - "sfx_rom.v"
+    - "sprite_rom.v"
 
 # The pinout of your project. Leave unused pins blank. DO NOT delete or add any pins.
 pinout:
