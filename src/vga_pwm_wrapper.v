@@ -35,6 +35,11 @@ module vga_pwm_wrapper (
         .pwm_out(pwm_out)
     );
 
+    pixel_color pixel (
+        .clk(clk),
+        .vga_color({vga_r,vga_g,vga_b})
+    );
+
     audio_source audio_source(
         .clk(clk),
         .rst_n(rst_n),
