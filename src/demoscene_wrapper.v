@@ -40,7 +40,9 @@ module demoscene_wrapper (
         .hsync(hsync),
         .vsync(vsync),
         .rst_n(rst_n),
-        .vga_color({vga_r,vga_g,vga_b})
+        .R(vga_r),
+        .G(vga_g),
+        .B(vga_b)
     );
 
     // audio_source audio_source(
