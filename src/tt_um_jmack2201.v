@@ -20,7 +20,7 @@ module tt_um_jmack2201 (
   assign uio_out[6:4] = 0;
   assign uio_oe = 8'b10001000;
 
-  vga_pwm_wrapper wrapper(
+  demoscene_wrapper wrapper(
     .clk(clk),
     .rst_n(rst_n),
     .vga_r({uo_out[0],uo_out[4]}),

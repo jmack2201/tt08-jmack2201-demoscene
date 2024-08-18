@@ -1,12 +1,10 @@
-module vga_pwm_wrapper (
+module demoscene_wrapper (
     input clk, rst_n, SCLK, SSEL, MOSI,
     output [1:0] vga_r, vga_b, vga_g,
     output hsync, vsync, pwm_out, MISO
 );
     reg [10:0] h_count, v_count;
     reg visible;
-
-    assign {vga_r,vga_g,vga_b} = h_count[5:0];
 
     vga vga (
         .clk(clk),
