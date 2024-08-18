@@ -1,5 +1,5 @@
 module pwm (
-    input clk, rst_n, audio_in,
+    input clk, rst_n,
     input [7:0] sample,
     output reg pwm_out
 );

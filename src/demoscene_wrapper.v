@@ -28,7 +28,6 @@ module demoscene_wrapper (
     pwm pwm (
         .clk(clk),
         .rst_n(rst_n),
-        .audio_in(audio_source_out),
         .sample(8'h01),
         .pwm_out(pwm_out)
     );

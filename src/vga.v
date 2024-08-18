@@ -5,7 +5,7 @@ module vga (
     output reg hsync, vsync
 );
     reg [1:0] h_state, v_state;
-    reg row_done, frame_done;
+    reg row_done;
 
     assign visible = (h_state == H_VISIBLE_S && v_state == V_VISIBLE_S) ? 1'b1 : 1'b0 ;
 
@@ -18,7 +18,6 @@ module vga (
             hsync <= 1;
             vsync <= 1;
             row_done <= 0;
-            frame_done <=0;
         end else begin
             case (h_state)
                 H_VISIBLE_S : begin
@@ -83,7 +82,6 @@ module vga (
             case (v_state)
                 V_VISIBLE_S : begin
                     vsync <=1;
-                    frame_done <=0;
                     if (v_count == V_VISIBLE_C-1 && row_done) begin
                         v_state <= V_FRONT_S;
                         v_count <= 0;
@@ -96,7 +94,6 @@ module vga (
                     end
                 end
                 V_FRONT_S : begin
-                    frame_done <=0;
                     if (v_count == V_FRONT_C-1 && row_done) begin
                         v_state <= V_PULSE_S;
                         v_count <= 0;
@@ -112,7 +109,6 @@ module vga (
                     end
                 end
                 V_PULSE_S : begin
-                    frame_done <=0;
                     if (v_count == V_PULSE_C-1 && row_done) begin
                         v_state <= V_BACK_S;
                         vsync <=1;
@@ -132,21 +128,17 @@ module vga (
                     if (v_count == V_BACK_C-1 && row_done) begin
                         v_state <= V_VISIBLE_S;
                         v_count <= 0;
-                        frame_done <=1;
                     end else if(row_done)begin
                         v_state <= V_BACK_S;
                         v_count <= v_count + 1;
-                        frame_done <=0;
                     end else begin
                         v_state <= v_state;
                         v_count <= v_count;
-                        frame_done <=0;
                     end
                 end
                 default: begin
                     v_count <= v_count;
                     vsync <= 1;
-                    frame_done <=0;
                     v_state <= V_VISIBLE_S;
                 end
             endcase
