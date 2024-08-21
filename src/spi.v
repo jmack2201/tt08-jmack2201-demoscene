@@ -7,7 +7,7 @@ module spi (
     reg [3:0] spi_byte_cnt;
     reg [7:0] spi_byte;
 
-    always @(posedge clk ) begin
+    always @(posedge SCLK ) begin
         if (~SSEL) begin
             MISO <= 0;
         end else begin
