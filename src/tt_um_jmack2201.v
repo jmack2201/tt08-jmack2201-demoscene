@@ -28,14 +28,14 @@ module tt_um_jmack2201 (
     .vga_b({uo_out[2],uo_out[6]}),
     .vsync(uo_out[3]),
     .hsync(uo_out[7]),
-    .SCLK(uio_out[0]),
-    .SSEL(uio_out[1]),
-    .MOSI(uio_out[2]),
+    .SCLK(uio_in[0]),
+    .SSEL(uio_in[1]),
+    .MOSI(uio_in[2]),
     .MISO(uio_out[3]),
     .pwm_out(uio_out[7])
   );
 
   // List all unused inputs to prevent warnings
-  // wire _unused = &{ena, , 1'b0};
+  wire _unused = &{ena, ui_in, uio_in[7:3]};
 
 endmodule
