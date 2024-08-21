@@ -4,6 +4,8 @@ module pixel_color (
     input visible,
     output reg [1:0] R,G,B
 );
+
+    reg [1:0] R_back, G_back, B_back;
     reg [5:0] rom_RGB;
     sprite_rom rom (.clk(clk), .addr(11'h00), .color_out(rom_RGB));
 
@@ -72,50 +74,51 @@ module pixel_color (
         endcase
     end
 
-    always @(*) begin
+    always @(*) begin //background color selection
         if (visible) begin
             case (background_state)
                 0 : begin //solid color
-                    {R,G,B} = solid_color;
+                    {R_back,G_back,B_back} = solid_color;
                 end
 
                 1: begin //vertical stripes
-                    {R,G,B} = hpos[5:0];
+                    {R_back,G_back,B_back} = hpos[5:0];
                 end
 
                 2: begin //horizontal stripes
-                    {R,G,B} = vpos[5:0];
+                    {R_back,G_back,B_back} = vpos[5:0];
                 end
 
                 3,4: begin //x moving
-                    R = {moving_x[5],vpos[2]};
-                    G = {moving_x[6],vpos[2]};
-                    B = {moving_x[7],vpos[2]};
+                    R_back = {moving_x[5],vpos[2]};
+                    G_back = {moving_x[6],vpos[2]};
+                    B_back = {moving_x[7],vpos[2]};
                 end
 
                 5,6: begin //y moving
-                    R = {moving_y[5],vpos[2]};
-                    G = {moving_y[6],vpos[2]};
-                    B = {moving_y[7],vpos[2]};
+                    R_back = {moving_y[5],vpos[2]};
+                    G_back = {moving_y[6],vpos[2]};
+                    B_back = {moving_y[7],vpos[2]};
                 end
 
                 7,8,9,10: begin //both moving
-                    R = {moving_y[5],moving_x[2]};
-                    G = {moving_y[6],moving_x[2]};
-                    B = {moving_y[7],moving_x[2]};
+                    R_back = {moving_y[5],moving_x[2]};
+                    G_back = {moving_y[6],moving_x[2]};
+                    B_back = {moving_y[7],moving_x[2]};
                 end
 
-                11: begin
-                    {R,G,B} = 6'b000000;
-                    if (hpos % 100) begin
-                        {R,G,B} = rom_RGB;
-                    end
-                end
-
-                default: {R,G,B} = 6'b000000;
+                default: {R_back,G_back,B_back} = 6'b000000;
             endcase
         end else begin
-            {R,G,B} = 6'b000000;
+            {R_back,G_back,B_back} = 6'b000000;
+        end
+    end
+
+    always @(*) begin
+        if (hpos >= 100 && hpos <= 500) begin
+            {R,G,B} = rom_RGB;
+        end else begin
+            {R,G,B} = 6'b110011;
         end
     end
 
