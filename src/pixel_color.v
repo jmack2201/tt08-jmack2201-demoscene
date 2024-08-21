@@ -5,7 +5,7 @@ module pixel_color (
     output reg [1:0] R,G,B
 );
     reg [5:0] rom_RGB;
-    sprite_rom rom (.clk(clk), .addr(8'h00), .color_out(rom_RGB));
+    sprite_rom rom (.clk(clk), .addr(11'h00), .color_out(rom_RGB));
 
     reg [9:0] moving_counter;
 
@@ -107,7 +107,7 @@ module pixel_color (
 
                 11: begin
                     {R,G,B} = 6'b000000;
-                    if (visible) begin
+                    if (hpos % 100) begin
                         {R,G,B} = rom_RGB;
                     end
                 end
