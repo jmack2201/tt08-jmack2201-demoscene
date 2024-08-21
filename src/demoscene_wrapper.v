@@ -16,21 +16,21 @@ module demoscene_wrapper (
         .vsync(vsync)
     );
 
-    // spi spi (
-    //     .SCLK(SCLK),
-    //     .SSEL(SSEL),
-    //     .MOSI(MOSI),
-    //     .MISO(MISO)
-    // );
+    spi spi (
+        .SCLK(SCLK),
+        .SSEL(SSEL),
+        .MOSI(MOSI),
+        .MISO(MISO)
+    );
 
-    // reg audio_source_out;
+    reg audio_source_out;
 
-    // pwm pwm (
-    //     .clk(clk),
-    //     .rst_n(rst_n),
-    //     .sample(8'h01),
-    //     .pwm_out(pwm_out)
-    // );
+    pwm pwm (
+        .clk(clk),
+        .rst_n(rst_n),
+        .sample(8'h01),
+        .pwm_out(pwm_out)
+    );
 
     pixel_color pixel (
         .clk(clk),
@@ -45,9 +45,9 @@ module demoscene_wrapper (
         .B(vga_b)
     );
 
-    // audio_source audio_source(
-    //     .clk(clk),
-    //     .rst_n(rst_n),
-    //     .audio_out(audio_source_out)
-    // );
+    audio_source audio_source(
+        .clk(clk),
+        .rst_n(rst_n),
+        .audio_out(audio_source_out)
+    );
 endmodule
