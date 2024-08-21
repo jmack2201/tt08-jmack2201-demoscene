@@ -5,7 +5,6 @@ module pixel_color (
     output reg [1:0] R,G,B
 );
 
-    reg [1:0] R_back, G_back, B_back;
     reg [5:0] rom_RGB;
     sprite_rom rom (.clk(clk), .addr(11'h00), .color_out(rom_RGB));
 
@@ -74,6 +73,7 @@ module pixel_color (
         endcase
     end
 
+    reg [1:0] R_back, G_back, B_back;
     always @(*) begin //background color selection
         if (visible) begin
             case (background_state)
