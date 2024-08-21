@@ -115,10 +115,14 @@ module pixel_color (
     end
 
     always @(*) begin
-        if (hpos >= 100 && hpos <= 500) begin
-            {R,G,B} = rom_RGB;
+        if (visible) begin
+            if (hpos >= 100 && hpos <= 500) begin
+                {R,G,B} = rom_RGB;
+            end else begin
+                {R,G,B} = {R_back,G_back,B_back};
+            end
         end else begin
-            {R,G,B} = 6'b110011;
+            {R,G,B} = 6'b000000;
         end
     end
 
