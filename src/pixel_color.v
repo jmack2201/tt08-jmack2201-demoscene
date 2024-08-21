@@ -4,10 +4,8 @@ module pixel_color (
     input visible,
     output reg [1:0] R,G,B
 );
-    // sprite_rom rom (.clk(clk), .addr(8'h00), .color_out(vga_color));
-
-    reg [7:0] background_state;
-    reg [5:0] solid_color;
+    reg [5:0] rom_RGB;
+    sprite_rom rom (.clk(clk), .addr(8'h00), .color_out(rom_RGB));
 
     reg [9:0] moving_counter;
 
@@ -16,6 +14,19 @@ module pixel_color (
             moving_counter <= 0;
         end else begin
             moving_counter <= moving_counter + 1;
+        end
+    end
+
+    reg [7:0] background_state;
+    reg [5:0] solid_color;
+
+    always @(posedge clk ) begin
+        if (!rst_n) begin
+            background_state <= 0;
+            solid_color <= 6'b110000;
+        end else begin
+            background_state <= 0;
+            solid_color <= 6'b110000;
         end
     end
 
@@ -62,8 +73,6 @@ module pixel_color (
     end
 
     always @(*) begin
-        background_state = 0;
-        solid_color = 6'b110000;
         if (visible) begin
             case (background_state)
                 0 : begin //solid color
@@ -94,6 +103,13 @@ module pixel_color (
                     R = {moving_y[5],moving_x[2]};
                     G = {moving_y[6],moving_x[2]};
                     B = {moving_y[7],moving_x[2]};
+                end
+
+                11: begin
+                    {R,G,B} = 6'b000000;
+                    if (visible) begin
+                        {R,G,B} = rom_RGB;
+                    end
                 end
 
                 default: {R,G,B} = 6'b000000;
