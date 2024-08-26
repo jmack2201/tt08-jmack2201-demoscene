@@ -37,7 +37,7 @@ module spi (
                     SOLID_COLOR : solid_color <= spi_byte[5:0];
                     AUDIO_EN : audio_en <= spi_byte[0];
                     default : begin
-                        background_statend_state <= background_state;
+                        background_state <= background_state;
                         solid_color <= solid_color;
                         audio_en <= audio_en;
                     end
