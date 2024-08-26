@@ -10,6 +10,10 @@ module spi (
     reg [3:0] spi_byte_cnt;
     reg [7:0] spi_byte;
 
+    parameter BACKGROUND_STATE = 0;
+    parameter SOLID_COLOR = 1;
+    parameter AUDIO_EN = 2;
+
     always @(posedge SCLK ) begin
         if (~SSEL) begin
             MISO <= 0;
@@ -24,9 +28,21 @@ module spi (
             solid_color <= 6'b101010;
             audio_en <= 1;
         end else begin
-            background_state <= 0;
-            solid_color <= 6'b101010;
-            audio_en <= 1;
+            background_state <= background_state;
+            solid_color <= solid_color;
+            audio_en <= audio_en;
+            if (spi_byte_cnt == 1) begin
+                case (spi_byte)
+                    BACKGROUND_STATE : background_state <= spi_byte;
+                    SOLID_COLOR : solid_color <= spi_byte[5:0];
+                    AUDIO_EN : audio_en <= spi_byte[0];
+                    default : begin
+                        background_statend_state <= background_state;
+                        solid_color <= solid_color;
+                        audio_en <= audio_en;
+                    end
+                endcase
+            end
         end
     end
 
