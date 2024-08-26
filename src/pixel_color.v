@@ -6,7 +6,46 @@ module pixel_color (
 );
 
     reg [5:0] rom_RGB;
-    sprite_rom rom (.clk(clk), .addr(11'h00), .color_out(rom_RGB));
+    sprite_rom rom (.clk(clk), .addr(addr), .color_out(rom_RGB));
+
+    wire [10:0] addr = {y_delta[6:0],x_delta[6:3]};
+
+    reg [9:0] sprite_left, sprite_top;
+    reg x_mov, y_mov;
+
+    wire [9:0] x_delta = hpos - sprite_left;
+    wire [9:0] y_delta = vpos - sprite_top;
+
+    reg [9:0] prev_y;
+
+    wire in_sprite = (x_delta[9:7] == 0 && y_delta[9:7] == 0);
+
+    always @(posedge clk ) begin
+        if (!rst_n) begin
+            sprite_left <= 150;
+            sprite_top <= 150;
+            x_mov <= 1;
+            y_mov <= 0;
+        end else begin
+            prev_y <= vpos;
+            if (vpos == 0 && prev_y != vpos) begin
+                sprite_left <= sprite_left + (x_mov ? 1 : -1);
+                sprite_top <= sprite_top + (y_mov ? 1 : -1);
+                if (sprite_top == V_DISPLAY-SPRITE_SIZE-1 && y_mov) begin
+                    y_mov <= 0;
+                end
+                if (sprite_top == 1 && !y_mov) begin
+                    y_mov <= 1;
+                end
+                if (sprite_left == H_DISPLAY-SPRITE_SIZE-1 && x_mov) begin
+                    x_mov <= 0;
+                end
+                if (sprite_left == 1 && !x_mov) begin
+                    x_mov <= 1;
+                end
+            end
+        end
+    end
 
     reg [9:0] moving_counter;
 
@@ -116,7 +155,7 @@ module pixel_color (
 
     always @(*) begin
         if (visible) begin
-            if (hpos >= 100 && hpos <= 500) begin
+            if (in_sprite) begin
                 {R,G,B} = rom_RGB;
             end else begin
                 {R,G,B} = {R_back,G_back,B_back};
