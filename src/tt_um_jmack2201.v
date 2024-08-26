@@ -33,7 +33,7 @@ module tt_um_jmack2201 (
     .SSEL(uio_in[1]),
     .MOSI(uio_in[2]),
     .MISO(uio_out[3]),
-    .pwm_out(uio_out[7])
+    .audio_out(uio_out[7])
   );
 
   // List all unused inputs to prevent warnings

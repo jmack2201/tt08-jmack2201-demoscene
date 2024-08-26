@@ -1,7 +1,7 @@
 module demoscene_wrapper (
     input clk, rst_n, SCLK, SSEL, MOSI,
     output [1:0] vga_r, vga_b, vga_g,
-    output hsync, vsync, pwm_out, MISO
+    output hsync, vsync, audio_out, MISO
 );
     reg [9:0] h_count, v_count;
     reg visible;
@@ -23,15 +23,6 @@ module demoscene_wrapper (
         .MISO(MISO)
     );
 
-    reg audio_source_out;
-
-    pwm pwm (
-        .clk(clk),
-        .rst_n(rst_n),
-        .sample(8'h01),
-        .pwm_out(pwm_out)
-    );
-
     pixel_color pixel (
         .clk(clk),
         .visible(visible),
@@ -48,6 +39,6 @@ module demoscene_wrapper (
     audio_source audio_source(
         .clk(clk),
         .rst_n(rst_n),
-        .audio_out(audio_source_out)
+        .audio_out(audio_out)
     );
 endmodule
