@@ -39,6 +39,7 @@ module demoscene_wrapper (
     audio_source audio_source(
         .clk(clk),
         .rst_n(rst_n),
+        .audio_en(1'b1),
         .audio_out(audio_out)
     );
 endmodule

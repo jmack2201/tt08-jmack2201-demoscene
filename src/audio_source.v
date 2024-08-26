@@ -1,5 +1,5 @@
 module audio_source (
-    input clk, rst_n,
+    input clk, rst_n, audio_en,
     output reg audio_out
 );
 
