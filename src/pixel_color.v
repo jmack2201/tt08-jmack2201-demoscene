@@ -8,7 +8,7 @@ module pixel_color (
     reg [5:0] rom_RGB;
     sprite_rom rom (.clk(clk), .addr(addr), .color_out(rom_RGB));
 
-    wire [10:0] addr = {y_delta[6:0],x_delta[6:3]};
+    wire [13:0] addr = y_delta[6:0]*SPRITE_SIZE + x_delta[6:0];
 
     reg [9:0] sprite_left, sprite_top;
     reg x_mov, y_mov;
