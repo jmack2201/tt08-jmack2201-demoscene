@@ -6,6 +6,10 @@ module demoscene_wrapper (
     reg [9:0] h_count, v_count;
     reg visible;
 
+    reg [7:0] background_state;
+    reg [5:0] solid_color;
+    reg audio_en;
+
     hvsync_generator vga (
         .clk(clk),
         .reset(~rst_n),
@@ -20,7 +24,10 @@ module demoscene_wrapper (
         .SCLK(SCLK),
         .SSEL(SSEL),
         .MOSI(MOSI),
-        .MISO(MISO)
+        .MISO(MISO),
+        .background_state(background_state),
+        .solid_color(solid_color),
+        .audio_en(audio_en)
     );
 
     pixel_color pixel (
@@ -31,6 +38,8 @@ module demoscene_wrapper (
         .hsync(hsync),
         .vsync(vsync),
         .rst_n(rst_n),
+        .background_state(background_state),
+        .solid_color(solid_color),
         .R(vga_r),
         .G(vga_g),
         .B(vga_b)
@@ -39,7 +48,7 @@ module demoscene_wrapper (
     audio_source audio_source(
         .clk(clk),
         .rst_n(rst_n),
-        .audio_en(1'b1),
+        .audio_en(audio_en),
         .audio_out(audio_out)
     );
 endmodule

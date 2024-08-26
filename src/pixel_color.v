@@ -2,6 +2,8 @@ module pixel_color (
     input clk, hsync, vsync, rst_n,
     input [9:0] hpos, vpos,
     input visible,
+    input [7:0] background_state,
+    input [5:0] solid_color,
     output reg [1:0] R,G,B
 );
 
@@ -54,19 +56,6 @@ module pixel_color (
             moving_counter <= 0;
         end else begin
             moving_counter <= moving_counter + 1;
-        end
-    end
-
-    reg [7:0] background_state;
-    reg [5:0] solid_color;
-
-    always @(posedge clk ) begin
-        if (!rst_n) begin
-            background_state <= 0;
-            solid_color <= 6'b110000;
-        end else begin
-            background_state <= 0;
-            solid_color <= 6'b110000;
         end
     end
 

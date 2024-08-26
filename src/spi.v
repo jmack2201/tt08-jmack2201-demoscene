@@ -1,6 +1,9 @@
 module spi (
     input SCLK, SSEL, MOSI,
-    output reg MISO
+    output reg MISO,
+    output reg [7:0] background_state,
+    output reg [5:0] solid_color,
+    output reg audio_en
 );
     reg [2:0] spi_bit_count;
 
@@ -12,6 +15,18 @@ module spi (
             MISO <= 0;
         end else begin
             MISO <= 1;
+        end
+    end
+
+    always @(posedge SCLK) begin
+        if (~SSEL) begin
+            background_state <= 0;
+            solid_color <= 6'b101010;
+            audio_en <= 1;
+        end else begin
+            background_state <= 0;
+            solid_color <= 6'b101010;
+            audio_en <= 1;
         end
     end
 
