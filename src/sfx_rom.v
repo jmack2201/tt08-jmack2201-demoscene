@@ -1,10 +1,142 @@
 module sfx_rom (
-    input clk,
-    input [7:0] addr,
-    output reg [7:0] note_out
+	input clk,
+	input [6:0] addr,
+	output reg [7:0] note_out
 );
-    reg [7:0] note_arr [0:7];
-    always @(posedge clk ) begin
-        note_out <= note_arr[addr];
-    end
+	reg [7:0] note_arr [TUNE_LENGTH-1:0];
+
+	initial begin
+		note_arr[0] = 8'b01010101;
+		note_arr[1] = 8'b01010101;
+		note_arr[2] = 8'b01010101;
+		note_arr[3] = 8'b01010101;
+		note_arr[4] = 8'b01010101;
+		note_arr[5] = 8'b01010101;
+		note_arr[6] = 8'b01010101;
+		note_arr[7] = 8'b01010101;
+		note_arr[8] = 8'b01010101;
+		note_arr[9] = 8'b01010101;
+		note_arr[10] = 8'b01010101;
+		note_arr[11] = 8'b01010101;
+		note_arr[12] = 8'b01010101;
+		note_arr[13] = 8'b01010101;
+		note_arr[14] = 8'b01010101;
+		note_arr[15] = 8'b01010101;
+		note_arr[16] = 8'b01010101;
+		note_arr[17] = 8'b01010101;
+		note_arr[18] = 8'b01010101;
+		note_arr[19] = 8'b01010101;
+		note_arr[20] = 8'b01010101;
+		note_arr[21] = 8'b01010101;
+		note_arr[22] = 8'b01010101;
+		note_arr[23] = 8'b01010101;
+		note_arr[24] = 8'b01010101;
+		note_arr[25] = 8'b01010101;
+		note_arr[26] = 8'b01010101;
+		note_arr[27] = 8'b01010101;
+		note_arr[28] = 8'b01010101;
+		note_arr[29] = 8'b01010101;
+		note_arr[30] = 8'b01010101;
+		note_arr[31] = 8'b01010101;
+		note_arr[32] = 8'b01010101;
+		note_arr[33] = 8'b01010101;
+		note_arr[34] = 8'b01010101;
+		note_arr[35] = 8'b01010101;
+		note_arr[36] = 8'b01010101;
+		note_arr[37] = 8'b01010101;
+		note_arr[38] = 8'b01010101;
+		note_arr[39] = 8'b01010101;
+		note_arr[40] = 8'b01010101;
+		note_arr[41] = 8'b01010101;
+		note_arr[42] = 8'b01010101;
+		note_arr[43] = 8'b01010101;
+		note_arr[44] = 8'b01010101;
+		note_arr[45] = 8'b01010101;
+		note_arr[46] = 8'b01010101;
+		note_arr[47] = 8'b01010101;
+		note_arr[48] = 8'b01010101;
+		note_arr[49] = 8'b01010101;
+		note_arr[50] = 8'b01010101;
+		note_arr[51] = 8'b01010101;
+		note_arr[52] = 8'b01010101;
+		note_arr[53] = 8'b01010101;
+		note_arr[54] = 8'b01010101;
+		note_arr[55] = 8'b01010101;
+		note_arr[56] = 8'b01010101;
+		note_arr[57] = 8'b01010101;
+		note_arr[58] = 8'b01010101;
+		note_arr[59] = 8'b01010101;
+		note_arr[60] = 8'b01010101;
+		note_arr[61] = 8'b01010101;
+		note_arr[62] = 8'b01010101;
+		note_arr[63] = 8'b01010101;
+		note_arr[64] = 8'b01010101;
+		note_arr[65] = 8'b01010101;
+		note_arr[66] = 8'b01010101;
+		note_arr[67] = 8'b01010101;
+		note_arr[68] = 8'b01010101;
+		note_arr[69] = 8'b01010101;
+		note_arr[70] = 8'b01010101;
+		note_arr[71] = 8'b01010101;
+		note_arr[72] = 8'b01010101;
+		note_arr[73] = 8'b01010101;
+		note_arr[74] = 8'b01010101;
+		note_arr[75] = 8'b01010101;
+		note_arr[76] = 8'b01010101;
+		note_arr[77] = 8'b01010101;
+		note_arr[78] = 8'b01010101;
+		note_arr[79] = 8'b01010101;
+		note_arr[80] = 8'b01010101;
+		note_arr[81] = 8'b01010101;
+		note_arr[82] = 8'b01010101;
+		note_arr[83] = 8'b01010101;
+		note_arr[84] = 8'b01010101;
+		note_arr[85] = 8'b01010101;
+		note_arr[86] = 8'b01010101;
+		note_arr[87] = 8'b01010101;
+		note_arr[88] = 8'b01010101;
+		note_arr[89] = 8'b01010101;
+		note_arr[90] = 8'b01010101;
+		note_arr[91] = 8'b01010101;
+		note_arr[92] = 8'b01010101;
+		note_arr[93] = 8'b01010101;
+		note_arr[94] = 8'b01010101;
+		note_arr[95] = 8'b01010101;
+		note_arr[96] = 8'b01010101;
+		note_arr[97] = 8'b01010101;
+		note_arr[98] = 8'b01010101;
+		note_arr[99] = 8'b01010101;
+		note_arr[100] = 8'b01010101;
+		note_arr[101] = 8'b01010101;
+		note_arr[102] = 8'b01010101;
+		note_arr[103] = 8'b01010101;
+		note_arr[104] = 8'b01010101;
+		note_arr[105] = 8'b01010101;
+		note_arr[106] = 8'b01010101;
+		note_arr[107] = 8'b01010101;
+		note_arr[108] = 8'b01010101;
+		note_arr[109] = 8'b01010101;
+		note_arr[110] = 8'b01010101;
+		note_arr[111] = 8'b01010101;
+		note_arr[112] = 8'b01010101;
+		note_arr[113] = 8'b01010101;
+		note_arr[114] = 8'b01010101;
+		note_arr[115] = 8'b01010101;
+		note_arr[116] = 8'b01010101;
+		note_arr[117] = 8'b01010101;
+		note_arr[118] = 8'b01010101;
+		note_arr[119] = 8'b01010101;
+		note_arr[120] = 8'b01010101;
+		note_arr[121] = 8'b01010101;
+		note_arr[122] = 8'b01010101;
+		note_arr[123] = 8'b01010101;
+		note_arr[124] = 8'b01010101;
+		note_arr[125] = 8'b01010101;
+		note_arr[126] = 8'b01010101;
+		note_arr[127] = 8'b01010101;
+	end
+
+	always @(posedge clk) begin
+		note_out <= note_arr[addr];
+	end
 endmodule
