@@ -121,11 +121,15 @@ module pixel_color (
                 end
 
                 1: begin //vertical stripes
-                    {R_back,G_back,B_back} = hpos[5:0];
+                    R_back = {hpos[5],vpos[1]};
+                    G_back = {hpos[6],vpos[1]};
+                    B_back = {hpos[7],vpos[1]};
                 end
 
                 2: begin //horizontal stripes
-                    {R_back,G_back,B_back} = vpos[5:0];
+                    R_back = {vpos[5],hpos[1]};
+                    G_back = {vpos[6],hpos[1]};
+                    B_back = {vpos[7],hpos[1]};
                 end
 
                 3,4: begin //x moving
