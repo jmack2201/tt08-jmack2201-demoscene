@@ -25,6 +25,7 @@ module demoscene_wrapper (
         .SSEL(SSEL),
         .MOSI(MOSI),
         .MISO(MISO),
+        .rst_n(rst_n),
         .background_state(background_state),
         .solid_color(solid_color),
         .audio_en(audio_en)

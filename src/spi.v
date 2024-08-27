@@ -1,5 +1,5 @@
 module spi (
-    input SCLK, SSEL, MOSI,
+    input SCLK, SSEL, MOSI, rst_n,
     output reg MISO,
     output reg [7:0] background_state,
     output reg [5:0] solid_color,
@@ -23,7 +23,7 @@ module spi (
     end
 
     always @(posedge SCLK) begin
-        if (SSEL) begin
+        if (!rst_n) begin
             background_state <= 10;
             solid_color <= 6'b000000;
             audio_en <= 0;
@@ -35,7 +35,7 @@ module spi (
                 case (spi_byte)
                     BACKGROUND_STATE : background_state <= spi_byte;
                     SOLID_COLOR : solid_color <= spi_byte[5:0];
-                    AUDIO_EN : audio_en <= spi_byte[0];
+                    AUDIO_EN : audio_en <= spi_byte[1];
                     default : begin
                         background_state <= background_state;
                         solid_color <= solid_color;
