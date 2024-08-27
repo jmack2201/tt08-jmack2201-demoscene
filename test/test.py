@@ -70,8 +70,9 @@ async def end_spi_transmission(dut):
     dut.uio_in[1].value = 1
 
 async def send_spi_byte(dut, byte_i):
+    dut._log.info(f"SPI is sending the following byte: {byte_i}")
     for bit in byte_i:
-        dut.uio_in[2].value = bit
+        dut.uio_in[2].value = int(bit)
         await FallingEdge(dut.user_project.wrapper.SCLK)
 
 # async def grab_frame(dut):
@@ -139,9 +140,17 @@ async def configure_spi_registers(dut):
 
     await ClockCycles(dut.clk, 5)
     await start_spi_transmission(dut)
-    await send_spi_byte(dut,BinaryValue(255,8))
-    # await ClockCycles(dut.clk, 10)
-    assert dut.user_project.wrapper.spi.spi_byte.value == BinaryValue(255,8)
+    send_value = BinaryValue(2,8,False)
+    await send_spi_byte(dut,send_value.binstr)
+    assert dut.user_project.wrapper.spi.spi_byte.value == send_value.integer
+    await end_spi_transmission(dut)
+
+    await ClockCycles(dut.clk, 10)
+
+    await start_spi_transmission(dut)
+    send_value = BinaryValue(0,8,False)
+    await send_spi_byte(dut,send_value.binstr)
+    assert dut.user_project.wrapper.spi.spi_byte.value == send_value.integer
     await end_spi_transmission(dut)
 
     await Timer(1, "ms")
