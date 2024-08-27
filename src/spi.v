@@ -5,11 +5,6 @@ module spi (
     output reg [5:0] solid_color,
     output reg audio_en
 );
-    reg [2:0] spi_bit_count;
-
-    reg [3:0] spi_byte_cnt;
-    reg [7:0] spi_byte;
-
     parameter BACKGROUND_STATE = 0;
     parameter SOLID_COLOR = 1;
     parameter AUDIO_EN = 2;
@@ -31,11 +26,11 @@ module spi (
             background_state <= background_state;
             solid_color <= solid_color;
             audio_en <= audio_en;
-            if (spi_byte_cnt == 1) begin
-                case (spi_byte)
+            if (spi_byte_valid && spi_byte_cnt % 2 != 0 && spi_byte_cnt > 1) begin
+                case (config_reg)
                     BACKGROUND_STATE : background_state <= spi_byte;
                     SOLID_COLOR : solid_color <= spi_byte[5:0];
-                    AUDIO_EN : audio_en <= spi_byte[1];
+                    AUDIO_EN : audio_en <= spi_byte[0];
                     default : begin
                         background_state <= background_state;
                         solid_color <= solid_color;
@@ -46,6 +41,20 @@ module spi (
         end
     end
 
+    reg [3:0] config_reg;
+    always @(posedge SCLK) begin
+        if (SSEL) begin
+            config_reg <= 4'hF;
+        end else begin
+            config_reg <= config_reg;
+            if (spi_byte_cnt % 2 == 0 && spi_byte_valid) begin
+                config_reg <= spi_byte[3:0];
+            end
+        end
+    end
+
+    reg [2:0] spi_bit_count;
+    reg [7:0] spi_byte;
     always @(posedge SCLK) begin
         if (SSEL) begin
             spi_bit_count <= 3'b000;
@@ -56,14 +65,19 @@ module spi (
         end
     end
 
+    reg [3:0] spi_byte_cnt;
+    reg spi_byte_valid;
     always @(posedge SCLK ) begin
         if (SSEL) begin
             spi_byte_cnt <= 4'h0;
+            spi_byte_valid <= 0;
         end else begin
             if (spi_bit_count == 3'b111) begin
                 spi_byte_cnt <= spi_byte_cnt + 1;
+                spi_byte_valid <= 1;
             end else begin
                 spi_byte_cnt <= spi_byte_cnt;
+                spi_byte_valid <= 0;
             end
         end
     end
