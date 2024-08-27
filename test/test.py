@@ -9,6 +9,7 @@ import os
 import pprint as pp
 from cocotb.clock import Clock
 from cocotb.triggers import Timer, FallingEdge, RisingEdge, ClockCycles
+from cocotb.binary import BinaryValue
 
 pprint = pp.PrettyPrinter()
 
@@ -44,12 +45,34 @@ async def reset(dut):
     # Reset
     dut.ena.value = 1
     dut.ui_in.value = 0
-    dut.uio_in.value = 0
+    dut.uio_in[3].value = 0
+    dut.uio_in[4].value = 0
+    dut.uio_in[5].value = 0
+    dut.uio_in[6].value = 0
+    dut.uio_in[7].value = 0
     dut.rst_n.value = 0
+    await start_spi(dut)
     await ClockCycles(dut.clk, 10)
     await FallingEdge(dut.clk)
     dut.rst_n.value = 1
 
+async def start_spi(dut):
+    dut.uio_in[1].value = 1
+    dut.uio_in[2].value = 0
+    cocotb.start_soon(start_spi_clock(dut))
+
+async def start_spi_transmission(dut):
+    await FallingEdge(dut.user_project.wrapper.SCLK)
+    dut.uio_in[1].value = 0
+
+async def end_spi_transmission(dut):
+    await FallingEdge(dut.user_project.wrapper.SCLK)
+    dut.uio_in[1].value = 1
+
+async def send_spi_byte(dut, byte_i):
+    for bit in byte_i:
+        dut.uio_in[2].value = bit
+        await FallingEdge(dut.user_project.wrapper.SCLK)
 
 # async def grab_frame(dut):
 #     gen_image = PIL.Image.new("RGB",(H_VISIBLE,V_VISIBLE), "orange")
@@ -102,82 +125,23 @@ async def start_clock(dut):
     c = Clock(dut.clk, 39.8, units="ns")
     await c.start()
 
+async def start_spi_clock(dut):
+    c = Clock(dut.uio_in[0], 39.8, units="ns")
+    await c.start()
+
+# @cocotb.test()
+# async def reset_design(dut):
+#     await start_test(dut)
+
 @cocotb.test()
-async def simple(dut):
+async def configure_spi_registers(dut):
     await start_test(dut)
 
-# @cocotb.test()
-# async def run_VGA_single_red_frame(dut):
-#     await start_test(dut)
+    await ClockCycles(dut.clk, 5)
+    await start_spi_transmission(dut)
+    await send_spi_byte(dut,BinaryValue(255,8))
+    # await ClockCycles(dut.clk, 10)
+    assert dut.user_project.wrapper.spi.spi_byte.value == BinaryValue(255,8)
+    await end_spi_transmission(dut)
 
-#     # await FallingEdge(dut.clk)
-#     vga_control = 0
-#     dut.user_project.ui_in.value = vga_control
-
-#     end_frame = await cocotb.start(grab_frame(dut))
-#     frame = await end_frame.join()
-#     # frame.save("test.png")
-#     golden_image = golden_frame(vga_control)
-#     # golden_image.save("golden.png")
-#     await FallingEdge(dut.user_project.wrapper.vga.frame_done)
-
-#     image_difference = PIL.ImageChops.difference(frame, golden_image)
-
-#     assert(not image_difference.getbbox())
-
-# @cocotb.test()
-# async def run_VGA_single_green_frame(dut):
-#     await start_test(dut)
-
-#     # await FallingEdge(dut.clk)
-#     vga_control = 1
-#     dut.user_project.ui_in.value = vga_control
-
-#     end_frame = await cocotb.start(grab_frame(dut))
-#     frame = await end_frame.join()
-#     # frame.save("test.png")
-#     golden_image = golden_frame(vga_control)
-#     # golden_image.save("golden.png")
-#     await FallingEdge(dut.user_project.wrapper.vga.frame_done)
-
-#     image_difference = PIL.ImageChops.difference(frame, golden_image)
-
-#     assert(not image_difference.getbbox())
-
-# @cocotb.test()
-# async def run_VGA_single_blue_frame(dut):
-#     await start_test(dut)
-
-#     # await FallingEdge(dut.clk)
-#     vga_control = 2
-#     dut.user_project.ui_in.value = vga_control
-
-#     end_frame = await cocotb.start(grab_frame(dut))
-#     frame = await end_frame.join()
-#     # frame.save("test.png")
-#     golden_image = golden_frame(vga_control)
-#     # golden_image.save("golden.png")
-#     await FallingEdge(dut.user_project.wrapper.vga.frame_done)
-
-#     image_difference = PIL.ImageChops.difference(frame, golden_image)
-
-#     assert(not image_difference.getbbox())
-
-# @cocotb.test()
-# async def run_VGA_single_white_frame(dut):
-#     await start_test(dut)
-
-#     # await FallingEdge(dut.clk)
-#     vga_control = 3
-#     dut.user_project.ui_in.value = vga_control
-
-#     end_frame = await cocotb.start(grab_frame(dut))
-#     frame = await end_frame.join()
-#     frame.save("test.png")
-#     golden_image = golden_frame(vga_control)
-#     golden_image.save("golden.png")
-#     await FallingEdge(dut.user_project.wrapper.vga.frame_done)
-
-#     image_difference = PIL.ImageChops.difference(frame, golden_image)
-
-#     assert(not image_difference.getbbox())
+    await Timer(1, "ms")
