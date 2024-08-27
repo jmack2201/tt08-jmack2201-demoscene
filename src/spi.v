@@ -9,6 +9,10 @@ module spi (
     parameter SOLID_COLOR = 1;
     parameter AUDIO_EN = 2;
 
+    parameter SPI_REGISTER_CFG = 0;
+    parameter SPI_SPRITE_CFG = 1;
+    parameter SPI_AUDIO_CFG = 2;
+
     always @(posedge SCLK ) begin
         if (SSEL) begin
             MISO <= 0;
@@ -26,7 +30,7 @@ module spi (
             background_state <= background_state;
             solid_color <= solid_color;
             audio_en <= audio_en;
-            if (spi_byte_valid && spi_byte_cnt % 2 != 0 && spi_byte_cnt > 1) begin
+            if (spi_byte_valid && spi_byte_cnt % 2 != 0 && spi_byte_cnt > 1 && header_config == SPI_REGISTER_CFG) begin
                 case (config_reg)
                     BACKGROUND_STATE : background_state <= spi_byte;
                     SOLID_COLOR : solid_color <= spi_byte[5:0];
@@ -42,13 +46,19 @@ module spi (
     end
 
     reg [3:0] config_reg;
+    reg [7:0] header_config;
     always @(posedge SCLK) begin
         if (SSEL) begin
             config_reg <= 4'hF;
+            header_config <= 8'hFF;
         end else begin
             config_reg <= config_reg;
+            header_config <= header_config;
             if (spi_byte_cnt % 2 == 0 && spi_byte_valid) begin
                 config_reg <= spi_byte[3:0];
+            end
+            if (spi_byte_cnt == 1) begin
+                header_config <= spi_byte;
             end
         end
     end
