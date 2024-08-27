@@ -130,27 +130,34 @@ async def start_spi_clock(dut):
     c = Clock(dut.uio_in[0], 39.8, units="ns")
     await c.start()
 
-# @cocotb.test()
-# async def reset_design(dut):
-#     await start_test(dut)
-
 @cocotb.test()
 async def configure_spi_registers(dut):
     await start_test(dut)
 
+    background_state = 5
+    solid_color = 63
+    audio_en = 1
+
     await ClockCycles(dut.clk, 5)
-    await start_spi_transmission(dut)
-    send_value = BinaryValue(2,8,False)
-    await send_spi_byte(dut,send_value.binstr)
-    assert dut.user_project.wrapper.spi.spi_byte.value == send_value.integer
-    await end_spi_transmission(dut)
-
-    await ClockCycles(dut.clk, 10)
-
     await start_spi_transmission(dut)
     send_value = BinaryValue(0,8,False)
     await send_spi_byte(dut,send_value.binstr)
-    assert dut.user_project.wrapper.spi.spi_byte.value == send_value.integer
+    send_value = BinaryValue(0,8,False)
+    await send_spi_byte(dut,send_value.binstr)
+    send_value = BinaryValue(background_state,8,False)
+    await send_spi_byte(dut,send_value.binstr)
+    send_value = BinaryValue(1,8,False)
+    await send_spi_byte(dut,send_value.binstr)
+    send_value = BinaryValue(solid_color,8,False)
+    await send_spi_byte(dut,send_value.binstr)
+    send_value = BinaryValue(2,8,False)
+    await send_spi_byte(dut,send_value.binstr)
+    send_value = BinaryValue(audio_en,8,False)
+    await send_spi_byte(dut,send_value.binstr)
     await end_spi_transmission(dut)
 
-    await Timer(1, "ms")
+    assert dut.user_project.wrapper.spi.background_state.value == background_state
+    assert dut.user_project.wrapper.spi.solid_color.value == solid_color
+    assert dut.user_project.wrapper.spi.audio_en.value == audio_en
+
+    await Timer(5, "us")
