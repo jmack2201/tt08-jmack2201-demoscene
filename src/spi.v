@@ -15,7 +15,7 @@ module spi (
     parameter AUDIO_EN = 2;
 
     always @(posedge SCLK ) begin
-        if (~SSEL) begin
+        if (SSEL) begin
             MISO <= 0;
         end else begin
             MISO <= 1;
@@ -23,10 +23,10 @@ module spi (
     end
 
     always @(posedge SCLK) begin
-        if (~SSEL) begin
-            background_state <= 0;
-            solid_color <= 6'b101010;
-            audio_en <= 1;
+        if (SSEL) begin
+            background_state <= 10;
+            solid_color <= 6'b000000;
+            audio_en <= 0;
         end else begin
             background_state <= background_state;
             solid_color <= solid_color;
@@ -47,7 +47,7 @@ module spi (
     end
 
     always @(posedge SCLK) begin
-        if (~SSEL) begin
+        if (SSEL) begin
             spi_bit_count <= 3'b000;
             spi_byte <= 8'h00;
         end else begin
@@ -57,7 +57,7 @@ module spi (
     end
 
     always @(posedge SCLK ) begin
-        if (~SSEL) begin
+        if (SSEL) begin
             spi_byte_cnt <= 4'h0;
         end else begin
             if (spi_bit_count == 3'b111) begin
