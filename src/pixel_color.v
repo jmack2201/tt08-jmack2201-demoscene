@@ -101,6 +101,19 @@ module pixel_color (
         endcase
     end
 
+
+    reg [5:0] lfsr_out;
+
+    reg [2:0] feedback = ~(lfsr_out[2] ^ lfsr_out[1] ^ lfsr_out[0]);
+
+    always @(posedge clk) begin
+    if (!rst_n)
+        lfsr_out <= 6'b0;
+    else
+        lfsr_out <= {lfsr_out[5:3],feedback};
+    end
+
+
     reg [1:0] R_back, G_back, B_back;
     always @(*) begin //background color selection
         if (visible) begin
@@ -137,6 +150,10 @@ module pixel_color (
                     R_back = {moving_y[5],moving_x[2]};
                     G_back = {moving_y[6],moving_x[2]};
                     B_back = {moving_y[7],moving_x[2]};
+                end
+
+                11: begin
+                    {R_back,G_back,B_back} = lfsr_out;
                 end
 
                 default: {R_back,G_back,B_back} = 6'b000000;
