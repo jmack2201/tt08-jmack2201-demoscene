@@ -80,8 +80,69 @@ async def start_spi_clock(dut):
     c = Clock(dut.uio_in[0], 39.8, units="ns")
     await c.start()
 
+
 @cocotb.test()
-async def configure_spi_registers(dut):
+async def configure_background_state_spi_registers(dut):
+    await start_test(dut)
+
+    background_state = 5
+
+    await ClockCycles(dut.clk, 5)
+    await start_spi_transmission(dut)
+    send_value = BinaryValue(0,8,False)
+    await send_spi_byte(dut,send_value.binstr)
+    send_value = BinaryValue(0,8,False)
+    await send_spi_byte(dut,send_value.binstr)
+    send_value = BinaryValue(background_state,8,False)
+    await send_spi_byte(dut,send_value.binstr)
+    await end_spi_transmission(dut)
+
+    assert dut.user_project.wrapper.spi.background_state.value == background_state
+
+    await Timer(1, "us")
+
+@cocotb.test()
+async def configure_solid_color_spi_register(dut):
+    await start_test(dut)
+
+    solid_color = 63
+
+    await ClockCycles(dut.clk, 5)
+    await start_spi_transmission(dut)
+    send_value = BinaryValue(0,8,False)
+    await send_spi_byte(dut,send_value.binstr)
+    send_value = BinaryValue(1,8,False)
+    await send_spi_byte(dut,send_value.binstr)
+    send_value = BinaryValue(solid_color,8,False)
+    await send_spi_byte(dut,send_value.binstr)
+    await end_spi_transmission(dut)
+
+    assert dut.user_project.wrapper.spi.solid_color.value == solid_color
+
+    await Timer(1, "us")
+
+@cocotb.test()
+async def configure_audio_en_spi_registers(dut):
+    await start_test(dut)
+
+    audio_en = 1
+
+    await ClockCycles(dut.clk, 5)
+    await start_spi_transmission(dut)
+    send_value = BinaryValue(0,8,False)
+    await send_spi_byte(dut,send_value.binstr)
+    send_value = BinaryValue(2,8,False)
+    await send_spi_byte(dut,send_value.binstr)
+    send_value = BinaryValue(audio_en,8,False)
+    await send_spi_byte(dut,send_value.binstr)
+    await end_spi_transmission(dut)
+
+    assert dut.user_project.wrapper.spi.audio_en.value == audio_en
+
+    await Timer(1, "us")
+
+@cocotb.test()
+async def configure_all_spi_registers(dut):
     await start_test(dut)
 
     background_state = 5

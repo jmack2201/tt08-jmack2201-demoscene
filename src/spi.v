@@ -23,7 +23,7 @@ module spi (
 
     always @(posedge SCLK) begin
         if (!rst_n) begin
-            background_state <= 10;
+            background_state <= 11;
             solid_color <= 6'b000000;
             audio_en <= 0;
         end else begin
@@ -57,7 +57,7 @@ module spi (
             if (spi_byte_cnt % 2 == 0 && spi_byte_valid) begin
                 config_reg <= spi_byte[3:0];
             end
-            if (spi_byte_cnt == 1) begin
+            if (spi_byte_cnt == 1 && spi_byte_valid) begin
                 header_config <= spi_byte;
             end
         end
