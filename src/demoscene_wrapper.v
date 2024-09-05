@@ -6,10 +6,6 @@ module demoscene_wrapper (
     reg [9:0] h_count, v_count;
     reg visible;
 
-    reg [7:0] background_state;
-    reg [5:0] solid_color;
-    reg audio_en;
-
     hvsync_generator vga (
         .clk(clk),
         .reset(~rst_n),
@@ -28,8 +24,6 @@ module demoscene_wrapper (
         .hsync(hsync),
         .vsync(vsync),
         .rst_n(rst_n),
-        .background_state(0),
-        .solid_color(6'b111111),
         .R(vga_r),
         .G(vga_g),
         .B(vga_b)
