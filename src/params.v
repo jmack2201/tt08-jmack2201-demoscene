@@ -8,4 +8,4 @@ parameter V_BOTTOM = 10;
 parameter V_SYNC = 2;
 parameter V_TOP = 33;
 
-parameter SPRITE_SIZE = 128;
+parameter SPRITE_SIZE = 64;

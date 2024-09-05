@@ -1,10 +1,12 @@
 import PIL
 import PIL.Image
+import math
 
 with open("../src/params.v","r") as fp:
     contents = fp.readlines()
 sprite_size = int([line.strip().split()[-1][:-1] for line in contents if "SPRITE" in line][0])
-header = "module sprite_rom0 (\n\tinput clk,\n\tinput [13:0] addr,\n\toutput reg [5:0] color_out\n);\n\treg [7:0] color_arr [SPRITE_SIZE*SPRITE_SIZE-1:0];\n"
+num_addr_bits = math.ceil(math.log2(sprite_size))
+header = f"module sprite_rom0 (\n\tinput clk,\n\tinput [{num_addr_bits-1}:0] addr,\n\toutput reg [5:0] color_out\n);\n\treg [7:0] color_arr [SPRITE_SIZE*SPRITE_SIZE-1:0];\n"
 body = ""
 footer = "\n\talways @(posedge clk) begin\n\t\tcolor_out <= color_arr[addr][5:0];\n\tend\nendmodule\n"
 
@@ -25,7 +27,7 @@ with open("../src/sprite_rom0.v","w") as fp:
     fp.write(header+body+footer)
 
 sprite_size = int([line.strip().split()[-1][:-1] for line in contents if "SPRITE" in line][0])
-header = "module sprite_rom1 (\n\tinput clk,\n\tinput [13:0] addr,\n\toutput reg [5:0] color_out\n);\n\treg [7:0] color_arr [SPRITE_SIZE*SPRITE_SIZE-1:0];\n"
+header = f"module sprite_rom1 (\n\tinput clk,\n\tinput [{num_addr_bits-1}:0] addr,\n\toutput reg [5:0] color_out\n);\n\treg [7:0] color_arr [SPRITE_SIZE*SPRITE_SIZE-1:0];\n"
 body = ""
 footer = "\n\talways @(posedge clk) begin\n\t\tcolor_out <= color_arr[addr][5:0];\n\tend\nendmodule\n"
 

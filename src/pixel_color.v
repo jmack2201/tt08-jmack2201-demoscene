@@ -69,7 +69,12 @@ module pixel_color (
             end else begin
                 background_state <= vga_control[3:0];
             end
-            solid_color <= solid_color;
+            case (vga_control[7:5])
+                3'b100: solid_color[5:4] <= vga_control[1:0];
+                3'b010: solid_color[3:2] <= vga_control[1:0];
+                3'b001: solid_color[1:0] <= vga_control[1:0];
+                default: solid_color <= solid_color;
+            endcase
         end
     end
 
