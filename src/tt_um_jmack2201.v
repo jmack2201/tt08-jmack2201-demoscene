@@ -17,26 +17,21 @@ module tt_um_jmack2201 (
 );
 
   // All output pins must be assigned. If not used, assign to 0.
-  assign uio_out[6:4] = 0;
-  assign uio_out[2:0] = 0;
-  assign uio_oe = 8'b10001000;
+  assign uio_out = 0;
+  assign uio_oe = 0;
 
   demoscene_wrapper wrapper(
     .clk(clk),
     .rst_n(rst_n),
+    .vga_control(ui_in),
     .vga_r({uo_out[0],uo_out[4]}),
     .vga_g({uo_out[1],uo_out[5]}),
     .vga_b({uo_out[2],uo_out[6]}),
     .vsync(uo_out[3]),
-    .hsync(uo_out[7]),
-    .SCLK(uio_in[0]),
-    .SSEL(uio_in[1]),
-    .MOSI(uio_in[2]),
-    .MISO(uio_out[3]),
-    .audio_out(uio_out[7])
+    .hsync(uo_out[7])
   );
 
   // List all unused inputs to prevent warnings
-  wire _unused = &{ena, ui_in, uio_in[7:3]};
+  wire _unused = &{ena, ui_in, uio_in};
 
 endmodule

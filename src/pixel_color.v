@@ -1,14 +1,15 @@
 module pixel_color (
     input clk, hsync, vsync, rst_n,
     input [9:0] hpos, vpos,
+    input [7:0] vga_control,
     input visible,
-    input [7:0] background_state,
-    input [5:0] solid_color,
     output reg [1:0] R,G,B
 );
 
-    reg [5:0] rom_RGB;
-    sprite_rom rom (.clk(clk), .addr(addr), .color_out(rom_RGB));
+    reg [5:0] rom0_RGB;
+    reg [5:0] rom1_RGB;
+    sprite_rom0 rom0 (.clk(clk), .addr(addr), .color_out(rom0_RGB));
+    sprite_rom1 rom1 (.clk(clk), .addr(addr), .color_out(rom1_RGB));
 
     wire [13:0] addr = y_delta[6:0]*SPRITE_SIZE + x_delta[6:0];
 
@@ -22,12 +23,14 @@ module pixel_color (
 
     wire in_sprite = (x_delta[9:7] == 0 && y_delta[9:7] == 0);
 
+    reg [3:0] looping_background_count;
     always @(posedge clk ) begin
         if (!rst_n) begin
             sprite_left <= 150;
             sprite_top <= 150;
             x_mov <= 1;
             y_mov <= 0;
+            looping_background_count <= 0;
         end else begin
             prev_y <= vpos;
             if (vpos == 0 && prev_y != vpos) begin
@@ -35,19 +38,46 @@ module pixel_color (
                 sprite_top <= sprite_top + (y_mov ? 1 : -1);
                 if (sprite_top == V_DISPLAY-SPRITE_SIZE-1 && y_mov) begin
                     y_mov <= 0;
+                    looping_background_count <= looping_background_count + 1;
                 end
                 if (sprite_top == 1 && !y_mov) begin
                     y_mov <= 1;
+                    looping_background_count <= looping_background_count + 1;
                 end
                 if (sprite_left == H_DISPLAY-SPRITE_SIZE-1 && x_mov) begin
                     x_mov <= 0;
+                    looping_background_count <= looping_background_count + 1;
                 end
                 if (sprite_left == 1 && !x_mov) begin
                     x_mov <= 1;
+                    looping_background_count <= looping_background_count + 1;
                 end
             end
         end
     end
+
+    reg [7:0] background_state;
+    reg [5:0] solid_color;
+
+    always @(posedge clk ) begin
+        if (!rst_n) begin
+            background_state <= 0;
+            solid_color <= 6'b111111;
+        end else begin
+            if (vga_control[4]) begin
+                background_state <= looping_background_count;
+            end else begin
+                background_state <= vga_control[3:0];
+            end
+            case (vga_control[7:5])
+                3'b100: solid_color[5:4] <= vga_control[1:0];
+                3'b010: solid_color[3:2] <= vga_control[1:0];
+                3'b001: solid_color[1:0] <= vga_control[1:0];
+                default: solid_color <= solid_color;
+            endcase
+        end
+    end
+
 
     reg [9:0] moving_counter;
 
@@ -102,18 +132,6 @@ module pixel_color (
     end
 
 
-    reg [5:0] lfsr_out;
-
-    reg [2:0] feedback = ~(lfsr_out[2] ^ lfsr_out[1] ^ lfsr_out[0]);
-
-    always @(posedge clk) begin
-    if (!rst_n)
-        lfsr_out <= 6'b0;
-    else
-        lfsr_out <= {lfsr_out[5:3],feedback};
-    end
-
-
     reg [1:0] R_back, G_back, B_back;
     always @(*) begin //background color selection
         if (visible) begin
@@ -152,10 +170,6 @@ module pixel_color (
                     B_back = {moving_y[7],moving_x[2]};
                 end
 
-                11: begin
-                    {R_back,G_back,B_back} = lfsr_out;
-                end
-
                 default: {R_back,G_back,B_back} = 6'b000000;
             endcase
         end else begin
@@ -166,7 +180,11 @@ module pixel_color (
     always @(*) begin
         if (visible) begin
             if (in_sprite) begin
-                {R,G,B} = rom_RGB;
+                case (vga_control[5])
+                    0 : {R,G,B} = rom0_RGB;
+                    1 : {R,G,B} = rom1_RGB;
+                    default: {R,G,B} = rom0_RGB;
+                endcase
             end else begin
                 {R,G,B} = {R_back,G_back,B_back};
             end
