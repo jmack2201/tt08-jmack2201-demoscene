@@ -1,5 +1,6 @@
 module demoscene_wrapper (
     input clk, rst_n,
+    input [7:0] vga_control,
     output [1:0] vga_r, vga_b, vga_g,
     output hsync, vsync
 );
@@ -24,6 +25,7 @@ module demoscene_wrapper (
         .hsync(hsync),
         .vsync(vsync),
         .rst_n(rst_n),
+        .vga_control(vga_control),
         .R(vga_r),
         .G(vga_g),
         .B(vga_b)

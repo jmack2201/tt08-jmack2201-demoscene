@@ -1,6 +1,7 @@
 module pixel_color (
     input clk, hsync, vsync, rst_n,
     input [9:0] hpos, vpos,
+    input [7:0] vga_control,
     input visible,
     output reg [1:0] R,G,B
 );
@@ -53,9 +54,9 @@ module pixel_color (
     always @(posedge clk ) begin
         if (!rst_n) begin
             background_state <= 0;
-            solid_color <= 6'b001100;
+            solid_color <= 6'b111111;
         end else begin
-            background_state <= background_state;
+            background_state <= vga_control;
             solid_color <= solid_color;
         end
     end
@@ -113,18 +114,6 @@ module pixel_color (
     end
 
 
-    reg [5:0] lfsr_out;
-
-    reg feedback = ~(lfsr_out[2] ^ lfsr_out[1] ^ lfsr_out[0]);
-
-    always @(posedge clk) begin
-    if (!rst_n)
-        lfsr_out <= 6'b0;
-    else
-        lfsr_out <= {lfsr_out[5:1],feedback};
-    end
-
-
     reg [1:0] R_back, G_back, B_back;
     always @(*) begin //background color selection
         if (visible) begin
@@ -161,10 +150,6 @@ module pixel_color (
                     R_back = {moving_y[5],moving_x[2]};
                     G_back = {moving_y[6],moving_x[2]};
                     B_back = {moving_y[7],moving_x[2]};
-                end
-
-                11: begin
-                    {R_back,G_back,B_back} = lfsr_out;
                 end
 
                 default: {R_back,G_back,B_back} = 6'b000000;
