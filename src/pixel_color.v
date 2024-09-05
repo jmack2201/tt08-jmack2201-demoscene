@@ -21,7 +21,7 @@ module pixel_color (
 
     reg [9:0] prev_y;
 
-    wire in_sprite = (x_delta[9:7] == 0 && y_delta[9:7] == 0);
+    wire in_sprite = (x_delta[9:6] == 0 && y_delta[9:6] == 0);
 
     reg [3:0] looping_background_count;
     always @(posedge clk ) begin
