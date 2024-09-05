@@ -11,7 +11,7 @@ module pixel_color (
     sprite_rom0 rom0 (.clk(clk), .addr(addr), .color_out(rom0_RGB));
     sprite_rom1 rom1 (.clk(clk), .addr(addr), .color_out(rom1_RGB));
 
-    wire [13:0] addr = y_delta[6:0]*SPRITE_SIZE + x_delta[6:0];
+    wire [11:0] addr = y_delta[5:0]*SPRITE_SIZE + x_delta[5:0];
 
     reg [9:0] sprite_left, sprite_top;
     reg x_mov, y_mov;
@@ -89,48 +89,10 @@ module pixel_color (
         end
     end
 
-    reg [9:0] moving_x, moving_y;
+    wire [9:0] moving_x, moving_y;
 
-    always @(*) begin
-        case (background_state)
-            3 : begin
-                moving_x = hpos + moving_counter;
-            end
-
-            4: begin
-                moving_x = hpos - moving_counter;
-            end
-
-            5: begin
-                moving_y = vpos + moving_counter;
-            end 
-
-            6: begin
-                moving_y = vpos - moving_counter;
-            end 
-            7: begin
-                moving_x = hpos + moving_counter;
-                moving_y = vpos + moving_counter;
-            end
-            8: begin
-                moving_x = hpos - moving_counter;
-                moving_y = vpos + moving_counter;
-            end
-            9: begin
-                moving_x = hpos + moving_counter;
-                moving_y = vpos - moving_counter;
-            end
-            10: begin
-                moving_x = hpos - moving_counter;
-                moving_y = vpos - moving_counter;
-            end
-            default: begin
-                moving_x = hpos + moving_counter;
-                moving_y = vpos + moving_counter;
-            end
-        endcase
-    end
-
+    assign moving_x = (background_state == 4 || background_state == 8 || background_state == 10) ? hpos - moving_counter : hpos + moving_counter;
+    assign moving_y = (background_state == 6 || background_state == 9 || background_state == 10) ? vpos - moving_counter : vpos + moving_counter;
 
     reg [1:0] R_back, G_back, B_back;
     always @(*) begin //background color selection
