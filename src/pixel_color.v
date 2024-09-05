@@ -23,12 +23,14 @@ module pixel_color (
 
     wire in_sprite = (x_delta[9:7] == 0 && y_delta[9:7] == 0);
 
+    reg [3:0] looping_background_count;
     always @(posedge clk ) begin
         if (!rst_n) begin
             sprite_left <= 150;
             sprite_top <= 150;
             x_mov <= 1;
             y_mov <= 0;
+            looping_background_count <= 0;
         end else begin
             prev_y <= vpos;
             if (vpos == 0 && prev_y != vpos) begin
@@ -36,15 +38,19 @@ module pixel_color (
                 sprite_top <= sprite_top + (y_mov ? 1 : -1);
                 if (sprite_top == V_DISPLAY-SPRITE_SIZE-1 && y_mov) begin
                     y_mov <= 0;
+                    looping_background_count <= looping_background_count + 1;
                 end
                 if (sprite_top == 1 && !y_mov) begin
                     y_mov <= 1;
+                    looping_background_count <= looping_background_count + 1;
                 end
                 if (sprite_left == H_DISPLAY-SPRITE_SIZE-1 && x_mov) begin
                     x_mov <= 0;
+                    looping_background_count <= looping_background_count + 1;
                 end
                 if (sprite_left == 1 && !x_mov) begin
                     x_mov <= 1;
+                    looping_background_count <= looping_background_count + 1;
                 end
             end
         end
@@ -61,29 +67,12 @@ module pixel_color (
             if (vga_control[4]) begin
                 background_state <= looping_background_count;
             end else begin
-                background_state <= vga_control;
+                background_state <= vga_control[3:0];
             end
             solid_color <= solid_color;
         end
     end
 
-    reg [3:0] looping_background_count;
-    reg [31:0] big_count;
-
-    always @(posedge clk ) begin
-        if (!rst_n) begin
-            looping_background_count <= 0;
-            big_count <= 1;
-        end else begin
-            if (big_count == 37500000) begin
-                looping_background_count <= looping_background_count + 1;
-                big_count <= 1;
-            end else begin
-                looping_background_count <= looping_background_count;
-                big_count <= big_count + 1;
-            end
-        end
-    end
 
     reg [9:0] moving_counter;
 
