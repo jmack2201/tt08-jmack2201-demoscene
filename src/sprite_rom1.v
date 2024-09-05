@@ -3,7 +3,7 @@ module sprite_rom1 (
 	input [11:0] addr,
 	output reg [5:0] color_out
 );
-	reg [5:0] color_arr [SPRITE_SIZE*SPRITE_SIZE-1:0];
+	reg [7:0] color_arr [SPRITE_SIZE*SPRITE_SIZE-1:0];
 
 	initial begin
 		color_arr[0] = 8'b00000000;
