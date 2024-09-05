@@ -5,7 +5,7 @@
 SIM ?= icarus
 TOPLEVEL_LANG ?= verilog
 SRC_DIR = $(PWD)/../src
-PROJECT_SOURCES = tt_um_jmack2201.v params.v demoscene_wrapper.v pixel_color.v sprite_rom.v hvsync_generator.v
+PROJECT_SOURCES = tt_um_jmack2201.v params.v demoscene_wrapper.v pixel_color.v sprite_rom0.v sprite_rom1.v hvsync_generator.v
 
 ifneq ($(GATES),yes)
 

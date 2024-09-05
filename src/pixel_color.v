@@ -6,8 +6,10 @@ module pixel_color (
     output reg [1:0] R,G,B
 );
 
-    reg [5:0] rom_RGB;
-    sprite_rom rom (.clk(clk), .addr(addr), .color_out(rom_RGB));
+    reg [5:0] rom0_RGB;
+    reg [5:0] rom1_RGB;
+    sprite_rom0 rom0 (.clk(clk), .addr(addr), .color_out(rom0_RGB));
+    sprite_rom1 rom1 (.clk(clk), .addr(addr), .color_out(rom1_RGB));
 
     wire [13:0] addr = y_delta[6:0]*SPRITE_SIZE + x_delta[6:0];
 
@@ -56,8 +58,30 @@ module pixel_color (
             background_state <= 0;
             solid_color <= 6'b111111;
         end else begin
-            background_state <= vga_control;
+            if (vga_control[4]) begin
+                background_state <= looping_background_count;
+            end else begin
+                background_state <= vga_control;
+            end
             solid_color <= solid_color;
+        end
+    end
+
+    reg [3:0] looping_background_count;
+    reg [31:0] big_count;
+
+    always @(posedge clk ) begin
+        if (!rst_n) begin
+            looping_background_count <= 0;
+            big_count <= 1;
+        end else begin
+            if (big_count == 37500000) begin
+                looping_background_count <= looping_background_count + 1;
+                big_count <= 1;
+            end else begin
+                looping_background_count <= looping_background_count;
+                big_count <= big_count + 1;
+            end
         end
     end
 
@@ -162,7 +186,11 @@ module pixel_color (
     always @(*) begin
         if (visible) begin
             if (in_sprite) begin
-                {R,G,B} = rom_RGB;
+                case (vga_control[5])
+                    0 : {R,G,B} = rom0_RGB;
+                    1 : {R,G,B} = rom1_RGB;
+                    default: {R,G,B} = rom0_RGB;
+                endcase
             end else begin
                 {R,G,B} = {R_back,G_back,B_back};
             end

@@ -1,4 +1,4 @@
-module sprite_rom (
+module sprite_rom0 (
 	input clk,
 	input [13:0] addr,
 	output reg [5:0] color_out
