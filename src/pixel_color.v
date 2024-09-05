@@ -104,13 +104,13 @@ module pixel_color (
 
     reg [5:0] lfsr_out;
 
-    reg [2:0] feedback = ~(lfsr_out[2] ^ lfsr_out[1] ^ lfsr_out[0]);
+    reg feedback = ~(lfsr_out[2] ^ lfsr_out[1] ^ lfsr_out[0]);
 
     always @(posedge clk) begin
     if (!rst_n)
         lfsr_out <= 6'b0;
     else
-        lfsr_out <= {lfsr_out[5:3],feedback};
+        lfsr_out <= {lfsr_out[5:1],feedback};
     end
 
 
