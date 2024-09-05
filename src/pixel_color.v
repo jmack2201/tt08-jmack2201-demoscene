@@ -58,22 +58,40 @@ module pixel_color (
 
     reg [7:0] background_state;
     reg [5:0] solid_color;
+    reg [1:0] sprite_sel;
 
     always @(posedge clk ) begin
         if (!rst_n) begin
             background_state <= 0;
             solid_color <= 6'b111111;
+            sprite_sel <= 0;
         end else begin
-            if (vga_control[4]) begin
-                background_state <= looping_background_count;
-            end else begin
-                background_state <= vga_control[3:0];
-            end
-            case (vga_control[7:5])
-                3'b100: solid_color[5:4] <= vga_control[1:0];
-                3'b010: solid_color[3:2] <= vga_control[1:0];
-                3'b001: solid_color[1:0] <= vga_control[1:0];
-                default: solid_color <= solid_color;
+            case (vga_control[7:6])
+                0 : begin
+                    background_state <= background_state;
+                    solid_color <= vga_control[5:0];
+                    sprite_sel <= sprite_sel;
+                end
+                1 : begin
+                    background_state <= background_state;
+                    solid_color <= solid_color;
+                    sprite_sel <= vga_control[1:0];
+                end
+                2 : begin
+                    background_state <= vga_control[3:0];
+                    solid_color <= solid_color;
+                    sprite_sel <= sprite_sel;
+                end
+                3 : begin
+                    background_state <= looping_background_count;
+                    solid_color <= solid_color;
+                    sprite_sel <= sprite_sel;
+                end
+                default: begin
+                    background_state <= background_state;
+                    solid_color <= solid_color;
+                    sprite_sel <= sprite_sel;
+                end
             endcase
         end
     end
@@ -132,7 +150,7 @@ module pixel_color (
                     B_back = {moving_y[7],moving_x[2]};
                 end
 
-                default: {R_back,G_back,B_back} = 6'b000000;
+                default: {R_back,G_back,B_back} = {R_back,G_back,B_back};
             endcase
         end else begin
             {R_back,G_back,B_back} = 6'b000000;
@@ -142,7 +160,7 @@ module pixel_color (
     always @(*) begin
         if (visible) begin
             if (in_sprite) begin
-                case (vga_control[5])
+                case (sprite_sel)
                     0 : {R,G,B} = rom0_RGB;
                     1 : {R,G,B} = rom1_RGB;
                     default: {R,G,B} = rom0_RGB;
