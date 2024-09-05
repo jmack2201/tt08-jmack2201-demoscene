@@ -14,8 +14,6 @@ sprite = PIL.Image.open("rom0.png").convert("RGB")
 pixels = sprite.load()
 
 body += "\n\tinitial begin\n"
-# for i in range(sprite_size*sprite_size):
-#     body += f"\t\tcolor_arr[{i}] = 8\'h0F;\n"
 for y in range(sprite_size):
     for x in range(sprite_size):
         lower_bits = [round(color/255 * 3) for color in pixels[x,y]]
