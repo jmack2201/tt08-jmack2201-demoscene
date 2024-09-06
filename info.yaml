@@ -25,7 +25,7 @@ project:
     # - "sprite_rom0.v"
     # - "sprite_rom1.v"
     - "sprite_rom2.v"
-    - "sprite_rom3.v"
+    # - "sprite_rom3.v"
 
 # The pinout of your project. Leave unused pins blank. DO NOT delete or add any pins.
 pinout:
