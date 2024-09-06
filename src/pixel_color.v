@@ -7,15 +7,9 @@ module pixel_color (
 );
 
     reg [5:0] rom0_RGB;
-    // reg [5:0] rom1_RGB;
-    // reg [5:0] rom2_RGB;
-    // reg [5:0] rom3_RGB;
     sprite_rom0 rom0 (.clk(clk), .addr(addr), .color_out(rom0_RGB));
-    // sprite_rom1 rom1 (.clk(clk), .addr(addr), .color_out(rom1_RGB));
-    // sprite_rom2 rom2 (.clk(clk), .addr(addr), .color_out(rom2_RGB));
-    // sprite_rom3 rom3 (.clk(clk), .addr(addr), .color_out(rom3_RGB));
 
-    wire [11:0] addr = y_delta[5:0]*SPRITE_SIZE + x_delta[5:0];
+    wire [13:0] addr = y_delta[6:0]*SPRITE_SIZE + x_delta[6:0];
 
     reg [9:0] sprite_left, sprite_top;
     reg x_mov, y_mov;
@@ -25,18 +19,23 @@ module pixel_color (
 
     reg [9:0] prev_y;
 
-    wire in_sprite = (x_delta[9:6] == 0 && y_delta[9:6] == 0);
+    wire in_sprite = (x_delta[9:7] == 0 && y_delta[9:7] == 0);
 
     reg [3:0] looping_background_count;
     always @(posedge clk ) begin
         if (!rst_n) begin
-            sprite_left <= 150;
-            sprite_top <= 150;
+            sprite_left <= 250;
+            sprite_top <= 250;
             x_mov <= 1;
             y_mov <= 0;
             looping_background_count <= 0;
         end else begin
             prev_y <= vpos;
+            if (looping_background_count == 10 ) begin
+                looping_background_count <= 0;
+            end else begin
+                looping_background_count <= looping_background_count;
+            end
             if (vpos == 0 && prev_y != vpos) begin
                 sprite_left <= sprite_left + (x_mov ? 1 : -1);
                 sprite_top <= sprite_top + (y_mov ? 1 : -1);
@@ -62,39 +61,32 @@ module pixel_color (
 
     reg [3:0] background_state;
     reg [5:0] solid_color;
-    reg [1:0] sprite_sel;
 
     always @(posedge clk ) begin
         if (!rst_n) begin
             background_state <= 0;
             solid_color <= 6'b111111;
-            sprite_sel <= 0;
         end else begin
             case (vga_control[7:6])
                 0 : begin
                     background_state <= background_state;
                     solid_color <= vga_control[5:0];
-                    sprite_sel <= sprite_sel;
                 end
                 1 : begin
                     background_state <= background_state;
                     solid_color <= solid_color;
-                    sprite_sel <= vga_control[1:0];
                 end
                 2 : begin
                     background_state <= vga_control[3:0];
                     solid_color <= solid_color;
-                    sprite_sel <= sprite_sel;
                 end
                 3 : begin
                     background_state <= looping_background_count;
                     solid_color <= solid_color;
-                    sprite_sel <= sprite_sel;
                 end
                 default: begin
                     background_state <= background_state;
                     solid_color <= solid_color;
-                    sprite_sel <= sprite_sel;
                 end
             endcase
         end
@@ -164,13 +156,7 @@ module pixel_color (
     always @(*) begin
         if (visible) begin
             if (in_sprite) begin
-                case (sprite_sel)
-                    // 0 : {R,G,B} = rom0_RGB;
-                    // 1 : {R,G,B} = rom1_RGB;
-                    0 : {R,G,B} = rom0_RGB;
-                    // 1 : {R,G,B} = rom3_RGB;
-                    default: {R,G,B} = rom0_RGB;
-                endcase
+                {R,G,B} = rom0_RGB;
             end else begin
                 {R,G,B} = {R_back,G_back,B_back};
             end
