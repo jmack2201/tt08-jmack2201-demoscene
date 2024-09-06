@@ -9,7 +9,7 @@ module pixel_color (
     reg [5:0] rom0_RGB;
     sprite_rom0 rom0 (.clk(clk), .addr(addr), .color_out(rom0_RGB));
 
-    wire [13:0] addr = y_delta[6:0]*SPRITE_SIZE + x_delta[6:0];
+    wire [11:0] addr = y_delta[5:0]*SPRITE_SIZE + x_delta[5:0];
 
     reg [9:0] sprite_left, sprite_top;
     reg x_mov, y_mov;
@@ -19,7 +19,7 @@ module pixel_color (
 
     reg [9:0] prev_y;
 
-    wire in_sprite = (x_delta[9:7] == 0 && y_delta[9:7] == 0);
+    wire in_sprite = (x_delta[9:6] == 0 && y_delta[9:6] == 0);
 
     reg [3:0] looping_background_count;
     always @(posedge clk ) begin
