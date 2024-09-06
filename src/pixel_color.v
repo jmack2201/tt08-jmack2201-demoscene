@@ -6,13 +6,13 @@ module pixel_color (
     output reg [1:0] R,G,B
 );
 
-    // reg [5:0] rom0_RGB;
+    reg [5:0] rom0_RGB;
     // reg [5:0] rom1_RGB;
-    reg [5:0] rom2_RGB;
-    reg [5:0] rom3_RGB;
-    // sprite_rom0 rom0 (.clk(clk), .addr(addr), .color_out(rom0_RGB));
+    // reg [5:0] rom2_RGB;
+    // reg [5:0] rom3_RGB;
+    sprite_rom0 rom0 (.clk(clk), .addr(addr), .color_out(rom0_RGB));
     // sprite_rom1 rom1 (.clk(clk), .addr(addr), .color_out(rom1_RGB));
-    sprite_rom2 rom2 (.clk(clk), .addr(addr), .color_out(rom2_RGB));
+    // sprite_rom2 rom2 (.clk(clk), .addr(addr), .color_out(rom2_RGB));
     // sprite_rom3 rom3 (.clk(clk), .addr(addr), .color_out(rom3_RGB));
 
     wire [11:0] addr = y_delta[5:0]*SPRITE_SIZE + x_delta[5:0];
@@ -167,9 +167,9 @@ module pixel_color (
                 case (sprite_sel)
                     // 0 : {R,G,B} = rom0_RGB;
                     // 1 : {R,G,B} = rom1_RGB;
-                    0 : {R,G,B} = rom2_RGB;
+                    0 : {R,G,B} = rom0_RGB;
                     // 1 : {R,G,B} = rom3_RGB;
-                    default: {R,G,B} = rom2_RGB;
+                    default: {R,G,B} = rom0_RGB;
                 endcase
             end else begin
                 {R,G,B} = {R_back,G_back,B_back};
