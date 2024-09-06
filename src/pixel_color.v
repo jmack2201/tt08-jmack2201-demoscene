@@ -31,11 +31,6 @@ module pixel_color (
             looping_background_count <= 0;
         end else begin
             prev_y <= vpos;
-            if (looping_background_count == 10 ) begin
-                looping_background_count <= 0;
-            end else begin
-                looping_background_count <= looping_background_count;
-            end
             if (vpos == 0 && prev_y != vpos) begin
                 sprite_left <= sprite_left + (x_mov ? 1 : -1);
                 sprite_top <= sprite_top + (y_mov ? 1 : -1);
@@ -103,6 +98,21 @@ module pixel_color (
         end
     end
 
+    reg [15:0] lfsr_reg;
+    wire feedback;
+    wire rng;
+
+    assign feedback = lfsr_reg[15] ^ lfsr_reg[13] ^ lfsr_reg[12] ^ lfsr_reg[10];
+    assign rng = lfsr_reg[0];
+
+    always @(posedge clk) begin
+    if (!rst_n) begin
+        lfsr_reg <= 16'h0001;
+    end else begin
+        lfsr_reg <= {lfsr_reg[14:0], feedback};
+    end
+    end
+
     wire [9:0] moving_x, moving_y;
 
     assign moving_x = (background_state == 4 || background_state == 8 || background_state == 10) ? hpos - moving_counter : hpos + moving_counter;
@@ -146,6 +156,11 @@ module pixel_color (
                     B_back = {moving_y[7],moving_x[2]};
                 end
 
+                11 : {R_back,G_back,B_back} = lfsr_reg[15:10]; //lfsr bw static
+                12 : {R_back,G_back,B_back} = lfsr_reg[15:10] ^ hpos ^ vpos; //color static
+                13 : {R_back,G_back,B_back} = hpos ^ vpos; //cool square pattern
+                14 : {R_back,G_back,B_back} = moving_x ^ moving_y ^ vpos; //moving square
+                15 : {R_back,G_back,B_back} = moving_x & moving_y ~^ vpos; //glowing moving square pattern
                 default: {R_back,G_back,B_back} = {R_back,G_back,B_back};
             endcase
         end else begin
